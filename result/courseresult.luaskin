@@ -1,0 +1,7 @@
+SKINTYPE = 15
+local t = require("resultmain")
+if skin_config then
+	return t.main()
+else
+	return t.header
+end
