@@ -88,7 +88,7 @@ local header = {
 		{name = "RANDOM配置表示", category = "op16", item = {
 			{name = "OFF", op = 916},
 			{name = "ON", op = 917}
-		}, def = "ON"}
+		}, def = "OFF"}
 	},
 	filepath = {
 		{name = "ノーツ",				category = "file1", path = "../customize/notes/*.png",		def = "default"},
