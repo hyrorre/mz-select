@@ -65,11 +65,11 @@ local function load()
 		{id = "default_stateplayoption_bg",				dst = {{x = parts_position.x, y = parts_position.y, w = 996, h = 50}}},
 		{id = "default_stateplayoption_item_name",		dst = {{x = parts_position.x, y = parts_position.y + 23, w = 996, h = 60}}},
 		
-		{id = "bmz_select_arrange",		act = 42, click = 2, dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "bmz_select_gauge",		act = 40, click = 2, dst = {{x = parts_position.x + 166, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "bmz_select_double_option",	act = 54, click = 2, dst = {{x = parts_position.x + 332, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "bmz_select_hs_fix",		act = 55, click = 2, dst = {{x = parts_position.x + 498, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "bmz_select_arrange_2p",		act = 43, click = 2, dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_arrange",		act = 42, click = 2, dst = {{x = parts_position.x + 83, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_gauge",		act = 40, click = 2, dst = {{x = parts_position.x + 249, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_double_option",	act = 54, click = 2, dst = {{x = parts_position.x + 415, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_hs_fix",		act = 55, click = 2, dst = {{x = parts_position.x + 581, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_arrange_2p",		act = 43, click = 2, dst = {{x = parts_position.x + 747, y = parts_position.y + 5, w = 166, h = 19}}},
 
 		--{id = "default_stateplayoption_duration",		dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 20, h = 19}}},
 		{id = "default_stateplayoption_duration_green",	dst = {{x = parts_position.x + 873, y = parts_position.y + 5, w = 20, h = 19}}}
