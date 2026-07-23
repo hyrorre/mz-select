@@ -46,63 +46,30 @@ local function load()
 		{id = "default_stateplayoption_speed_5",	src = src1_id, x = 498, y = 76, w = 166, h = 19}
 	}
 
-	parts.imageset = {
-		{id = "default_stateplayoption_option_random", ref = 42, images = {
-			"default_stateplayoption_random_1","default_stateplayoption_random_2",
-			"default_stateplayoption_random_3","default_stateplayoption_random_4",
-			"default_stateplayoption_random_5","default_stateplayoption_random_6",
-			"default_stateplayoption_random_7","default_stateplayoption_random_8",
-			"default_stateplayoption_random_9","default_stateplayoption_random_10"
-		}, act = 42, click = 2},
-		{id = "default_stateplayoption_option_gauge", ref = 40, images = {
-			"default_stateplayoption_gauge_1","default_stateplayoption_gauge_2",
-			"default_stateplayoption_gauge_3","default_stateplayoption_gauge_4",
-			"default_stateplayoption_gauge_5","default_stateplayoption_gauge_6"
-		}, act = 40, click = 2},
-		{id = "default_stateplayoption_option_dp", ref = 54, images = {
-			"default_stateplayoption_dp_1","default_stateplayoption_dp_2",
-			"default_stateplayoption_dp_3","default_stateplayoption_dp_4"
-		}, act = 54, click = 2},
-		{id = "default_stateplayoption_option_hsfix", ref = 55, images = {
-			"default_stateplayoption_speed_1","default_stateplayoption_speed_2",
-			"default_stateplayoption_speed_3","default_stateplayoption_speed_4",
-			"default_stateplayoption_speed_5"
-		}, act = 55, click = 2},
-		{id = "default_stateplayoption_option_random2", ref = 43, images = {
-			"default_stateplayoption_random_1","default_stateplayoption_random_2",
-			"default_stateplayoption_random_3","default_stateplayoption_random_4",
-			"default_stateplayoption_random_5","default_stateplayoption_random_6",
-			"default_stateplayoption_random_7","default_stateplayoption_random_8",
-			"default_stateplayoption_random_9","default_stateplayoption_random_10"
-		}, act = 43, click = 2}
-	}
+	parts.imageset = {}
 
 	parts.value = {
 		--{id = "default_stateplayoption_duration",		src = src1_id, x = 0, y = 250, w = 200, h = 19, align = 2, divx = 10, digit = 4, ref = 312},
 		{id = "default_stateplayoption_duration_green",	src = src1_id, x = 0, y = 250, w = 200, h = 19, align = 2, divx = 10, digit = 4, ref = 313}
 	}
 
-	-- ref 42 は F/MF-RANDOM を RANDOM として表示するため、拡張 ref 344 で名称を補う。
 	parts.text = {
-		{id = "default_stateplayoption_f_random", font = "font-default-commonparts-m_select1", size = 18, align = 1, constantText = "F-RANDOM"},
-		{id = "default_stateplayoption_mf_random", font = "font-default-commonparts-m_select1", size = 18, align = 1, constantText = "MF-RANDOM"},
-		{id = "default_stateplayoption_f_random2", font = "font-default-commonparts-m_select1", size = 18, align = 1, constantText = "F-RANDOM"},
-		{id = "default_stateplayoption_mf_random2", font = "font-default-commonparts-m_select1", size = 18, align = 1, constantText = "MF-RANDOM"}
+		{id = "bmz_select_arrange", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1},
+		{id = "bmz_select_gauge", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1},
+		{id = "bmz_select_double_option", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1},
+		{id = "bmz_select_hs_fix", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1},
+		{id = "bmz_select_arrange_2p", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1}
 	}
 	
 	parts.destination = {
 		{id = "default_stateplayoption_bg",				dst = {{x = parts_position.x, y = parts_position.y, w = 996, h = 50}}},
 		{id = "default_stateplayoption_item_name",		dst = {{x = parts_position.x, y = parts_position.y + 23, w = 996, h = 60}}},
 		
-		{id = "default_stateplayoption_option_random", draw = function() return main_state.event_index(344) ~= 10 and main_state.event_index(344) ~= 11 end, dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "default_stateplayoption_option_gauge",	dst = {{x = parts_position.x + 166, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "default_stateplayoption_option_dp",		dst = {{x = parts_position.x + 332, y = parts_position.y + 5, w = 166, h = 19}}},			
-		{id = "default_stateplayoption_option_hsfix",	dst = {{x = parts_position.x + 498, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "default_stateplayoption_option_random2", draw = function() return main_state.event_index(345) ~= 10 and main_state.event_index(345) ~= 11 end, dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "default_stateplayoption_f_random", draw = function() return main_state.event_index(344) == 10 end, dst = {{x = parts_position.x, y = parts_position.y + 5, w = 166, h = 18}}},
-		{id = "default_stateplayoption_mf_random", draw = function() return main_state.event_index(344) == 11 end, dst = {{x = parts_position.x, y = parts_position.y + 5, w = 166, h = 18}}},
-		{id = "default_stateplayoption_f_random2", draw = function() return main_state.event_index(345) == 10 end, dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 18}}},
-		{id = "default_stateplayoption_mf_random2", draw = function() return main_state.event_index(345) == 11 end, dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 18}}},
+		{id = "bmz_select_arrange",		act = 42, click = 2, dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_gauge",		act = 40, click = 2, dst = {{x = parts_position.x + 166, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_double_option",	act = 54, click = 2, dst = {{x = parts_position.x + 332, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_hs_fix",		act = 55, click = 2, dst = {{x = parts_position.x + 498, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "bmz_select_arrange_2p",		act = 43, click = 2, dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 19}}},
 
 		--{id = "default_stateplayoption_duration",		dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 20, h = 19}}},
 		{id = "default_stateplayoption_duration_green",	dst = {{x = parts_position.x + 873, y = parts_position.y + 5, w = 20, h = 19}}}
