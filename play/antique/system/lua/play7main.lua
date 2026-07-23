@@ -382,19 +382,24 @@ local function main()
 		{x = geo.note_dst[6].x, y = 250, w = geo.note_dst[6].w, h = 100},
 		{x = geo.note_dst[7].x, y = 250, w = geo.note_dst[7].w, h = 100}
 	}
-	geo.num_random		= {}
+	geo.num_random_white	= {}
+	geo.num_random_blue		= {}
 	for i = 1, 7 do
-		geo.num_random[i] = {
+		geo.num_random_white[i] = {
 			x = geo.note_dst[i].x + (geo.note_dst[i].w / 2) - 12,
 			y = geo.lane.y - 62,
 			w = 24,
 			h = 28
 		}
-		if i % 2 == 0 then
-			geo.num_random[i].r = 64
-			geo.num_random[i].g = 160
-			geo.num_random[i].b = 255
-		end
+		geo.num_random_blue[i] = {
+			x = geo.num_random_white[i].x,
+			y = geo.num_random_white[i].y,
+			w = geo.num_random_white[i].w,
+			h = geo.num_random_white[i].h,
+			r = 64,
+			g = 160,
+			b = 255
+		}
 	end
 	if isSixtarNotes_Type1() or isSixtarNotes_Type2() then
 		geo.note_dst[1].x	= geo.note_dst[1].x
@@ -1322,22 +1327,35 @@ local function main()
 			{id = "num_gauge",					dst = {geo.num_gauge}},
 			{id = "num_gauge_afterdot",			dst = {geo.num_gauge_ad}},
 			{id = "gauge",						dst = {geo.gauge}},
+		}
 
-			{id = "num_random_1", op = {80,917}, draw = function() return main_state.number(450) > 0 end, dst = {geo.num_random[1]}},
-			{id = "num_random_2", op = {80,917}, draw = function() return main_state.number(451) > 0 end, dst = {geo.num_random[2]}},
-			{id = "num_random_3", op = {80,917}, draw = function() return main_state.number(452) > 0 end, dst = {geo.num_random[3]}},
-			{id = "num_random_4", op = {80,917}, draw = function() return main_state.number(453) > 0 end, dst = {geo.num_random[4]}},
-			{id = "num_random_5", op = {80,917}, draw = function() return main_state.number(454) > 0 end, dst = {geo.num_random[5]}},
-			{id = "num_random_6", op = {80,917}, draw = function() return main_state.number(455) > 0 end, dst = {geo.num_random[6]}},
-			{id = "num_random_7", op = {80,917}, draw = function() return main_state.number(456) > 0 end, dst = {geo.num_random[7]}},
-			{id = "num_random_1", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(450) > 0 end, dst = {geo.num_random[1], {time = 500, a = 0}}},
-			{id = "num_random_2", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(451) > 0 end, dst = {geo.num_random[2], {time = 500, a = 0}}},
-			{id = "num_random_3", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(452) > 0 end, dst = {geo.num_random[3], {time = 500, a = 0}}},
-			{id = "num_random_4", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(453) > 0 end, dst = {geo.num_random[4], {time = 500, a = 0}}},
-			{id = "num_random_5", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(454) > 0 end, dst = {geo.num_random[5], {time = 500, a = 0}}},
-			{id = "num_random_6", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(455) > 0 end, dst = {geo.num_random[6], {time = 500, a = 0}}},
-			{id = "num_random_7", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(456) > 0 end, dst = {geo.num_random[7], {time = 500, a = 0}}},
-			
+		local function random_lane_is_white(ref)
+			return function()
+				local value = main_state.number(ref)
+				return value == 1 or value == 3 or value == 5 or value == 7
+			end
+		end
+
+		local function random_lane_is_blue(ref)
+			return function()
+				local value = main_state.number(ref)
+				return value == 2 or value == 4 or value == 6
+			end
+		end
+
+		local function append_random_lane_destination(id, ref, draw, dst)
+			table.insert(parts.play.destination, {id = id, op = {80,917}, draw = draw, dst = {dst}})
+			table.insert(parts.play.destination, {id = id, timer = 40, loop = -1, op = {81,917}, draw = draw, dst = {dst, {time = 500, a = 0}}})
+		end
+
+		for i = 1, 7 do
+			local id = "num_random_" .. i
+			local ref = 449 + i
+			append_random_lane_destination(id, ref, random_lane_is_white(ref), geo.num_random_white[i])
+			append_random_lane_destination(id, ref, random_lane_is_blue(ref), geo.num_random_blue[i])
+		end
+
+		append_all(parts.play.destination, {
 			{id = "img_level_beginner",	blend = 2, op = {151}, dst = {geo.level}},
 			{id = "img_level_normal",	blend = 2, op = {152}, dst = {geo.level}},
 			{id = "img_level_hyper",	blend = 2, op = {153}, dst = {geo.level}},
@@ -1420,7 +1438,7 @@ local function main()
 			{id = "img_hold6", blend = 2, offset = 3, timer = 76, dst = {geo.bomb[6]}},
 			{id = "img_hold7", blend = 2, offset = 3, timer = 77, dst = {geo.bomb[7]}},
 			{id = "img_holds", blend = 2, offset = 3, timer = 70, dst = {geo.bomb[8]}}
-		}
+		})
 		
 		skin.note = parts.play.note
 		skin.gauge = parts.play.gauge
