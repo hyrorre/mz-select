@@ -81,16 +81,28 @@ local function load()
 		--{id = "default_stateplayoption_duration",		src = src1_id, x = 0, y = 250, w = 200, h = 19, align = 2, divx = 10, digit = 4, ref = 312},
 		{id = "default_stateplayoption_duration_green",	src = src1_id, x = 0, y = 250, w = 200, h = 19, align = 2, divx = 10, digit = 4, ref = 313}
 	}
+
+	-- ref 42 は F/MF-RANDOM を RANDOM として表示するため、拡張 ref 344 で名称を補う。
+	parts.text = {
+		{id = "default_stateplayoption_f_random", font = "font-default-commonparts-m_select1", size = 18, align = 1, constantText = "F-RANDOM"},
+		{id = "default_stateplayoption_mf_random", font = "font-default-commonparts-m_select1", size = 18, align = 1, constantText = "MF-RANDOM"},
+		{id = "default_stateplayoption_f_random2", font = "font-default-commonparts-m_select1", size = 18, align = 1, constantText = "F-RANDOM"},
+		{id = "default_stateplayoption_mf_random2", font = "font-default-commonparts-m_select1", size = 18, align = 1, constantText = "MF-RANDOM"}
+	}
 	
 	parts.destination = {
 		{id = "default_stateplayoption_bg",				dst = {{x = parts_position.x, y = parts_position.y, w = 996, h = 50}}},
 		{id = "default_stateplayoption_item_name",		dst = {{x = parts_position.x, y = parts_position.y + 23, w = 996, h = 60}}},
 		
-		{id = "default_stateplayoption_option_random",	dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "default_stateplayoption_option_random", draw = function() return main_state.event_index(344) ~= 10 and main_state.event_index(344) ~= 11 end, dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 166, h = 19}}},
 		{id = "default_stateplayoption_option_gauge",	dst = {{x = parts_position.x + 166, y = parts_position.y + 5, w = 166, h = 19}}},
 		{id = "default_stateplayoption_option_dp",		dst = {{x = parts_position.x + 332, y = parts_position.y + 5, w = 166, h = 19}}},			
 		{id = "default_stateplayoption_option_hsfix",	dst = {{x = parts_position.x + 498, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "default_stateplayoption_option_random2",	dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "default_stateplayoption_option_random2", draw = function() return main_state.event_index(345) ~= 10 and main_state.event_index(345) ~= 11 end, dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "default_stateplayoption_f_random", draw = function() return main_state.event_index(344) == 10 end, dst = {{x = parts_position.x, y = parts_position.y + 5, w = 166, h = 18}}},
+		{id = "default_stateplayoption_mf_random", draw = function() return main_state.event_index(344) == 11 end, dst = {{x = parts_position.x, y = parts_position.y + 5, w = 166, h = 18}}},
+		{id = "default_stateplayoption_f_random2", draw = function() return main_state.event_index(345) == 10 end, dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 18}}},
+		{id = "default_stateplayoption_mf_random2", draw = function() return main_state.event_index(345) == 11 end, dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 18}}},
 
 		--{id = "default_stateplayoption_duration",		dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 20, h = 19}}},
 		{id = "default_stateplayoption_duration_green",	dst = {{x = parts_position.x + 873, y = parts_position.y + 5, w = 20, h = 19}}}

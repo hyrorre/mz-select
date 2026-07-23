@@ -240,6 +240,10 @@ local function main()
 		title_str = title_str .. main_state.text(12)
 		table.insert(skin.text, {id = "timing",	font = 1, size = 14, constantText = tmg_str})
 		table.insert(skin.text, {id = "title",	font = 0, size = 24, align = 1, constantText = title_str})
+		table.insert(skin.text, {id = "arrange_f_random", font = 2, size = 18, align = 0, constantText = "F-RANDOM"})
+		table.insert(skin.text, {id = "arrange_mf_random", font = 2, size = 18, align = 0, constantText = "MF-RANDOM"})
+		table.insert(skin.text, {id = "arrange_f_random_2p", font = 2, size = 18, align = 0, constantText = "2P F-RANDOM"})
+		table.insert(skin.text, {id = "arrange_mf_random_2p", font = 2, size = 18, align = 0, constantText = "2P MF-RANDOM"})
 	end
 	
 	skin.slider = {}
@@ -483,6 +487,13 @@ local function main()
 			-- 何もしない
 		else
 			table.insert(skin.destination, {id = "infomation", loop = dt[3], dst = {{time = dt[1], x = pos.info[1], y = pos.info[2], w = 385, h = 139, a = 0},{time = dt[3], a = 255}}})
+		end
+		if header.type == 7 then
+			-- ref 42 では F/MF-RANDOM が RANDOM と同じ index のため、拡張 ref 344 で区別する。
+			table.insert(skin.destination, {id = "arrange_f_random", draw = function() return main_state.event_index(344) == 10 end, loop = dt[3], dst = {{time = dt[1], x = pos.info[1], y = pos.info[2] - 20, w = 180, h = 18, a = 0},{time = dt[3], a = 255}}})
+			table.insert(skin.destination, {id = "arrange_mf_random", draw = function() return main_state.event_index(344) == 11 end, loop = dt[3], dst = {{time = dt[1], x = pos.info[1], y = pos.info[2] - 20, w = 180, h = 18, a = 0},{time = dt[3], a = 255}}})
+			table.insert(skin.destination, {id = "arrange_f_random_2p", draw = function() return main_state.event_index(345) == 10 end, loop = dt[3], dst = {{time = dt[1], x = pos.info[1], y = pos.info[2] - 40, w = 220, h = 18, a = 0},{time = dt[3], a = 255}}})
+			table.insert(skin.destination, {id = "arrange_mf_random_2p", draw = function() return main_state.event_index(345) == 11 end, loop = dt[3], dst = {{time = dt[1], x = pos.info[1], y = pos.info[2] - 40, w = 220, h = 18, a = 0},{time = dt[3], a = 255}}})
 		end
 	end
 	
