@@ -84,7 +84,11 @@ local header = {
 		{name = "コンボボイス", category = "op15", item = {
 			{name = "OFF", op = 1000},
 			{name = "VOICEVOX-春日部つむぎ", op = 1001}
-		}, def = "OFF"}
+		}, def = "OFF"},
+		{name = "RANDOM配置表示", category = "op16", item = {
+			{name = "OFF", op = 916},
+			{name = "ON", op = 917}
+		}, def = "ON"}
 	},
 	filepath = {
 		{name = "ノーツ",				category = "file1", path = "../customize/notes/*.png",		def = "default"},
@@ -127,6 +131,7 @@ local header = {
 		{name = "オプション", item = {
 			"op14",
 			"op4",
+			"op16",
 			"op1",
 			"op10",
 			"offset10",
@@ -1318,13 +1323,20 @@ local function main()
 			{id = "num_gauge_afterdot",			dst = {geo.num_gauge_ad}},
 			{id = "gauge",						dst = {geo.gauge}},
 
-			{id = "num_random_1", op = {80}, draw = function() return main_state.number(450) > 0 end, dst = {geo.num_random[1]}},
-			{id = "num_random_2", op = {80}, draw = function() return main_state.number(451) > 0 end, dst = {geo.num_random[2]}},
-			{id = "num_random_3", op = {80}, draw = function() return main_state.number(452) > 0 end, dst = {geo.num_random[3]}},
-			{id = "num_random_4", op = {80}, draw = function() return main_state.number(453) > 0 end, dst = {geo.num_random[4]}},
-			{id = "num_random_5", op = {80}, draw = function() return main_state.number(454) > 0 end, dst = {geo.num_random[5]}},
-			{id = "num_random_6", op = {80}, draw = function() return main_state.number(455) > 0 end, dst = {geo.num_random[6]}},
-			{id = "num_random_7", op = {80}, draw = function() return main_state.number(456) > 0 end, dst = {geo.num_random[7]}},
+			{id = "num_random_1", op = {80,917}, draw = function() return main_state.number(450) > 0 end, dst = {geo.num_random[1]}},
+			{id = "num_random_2", op = {80,917}, draw = function() return main_state.number(451) > 0 end, dst = {geo.num_random[2]}},
+			{id = "num_random_3", op = {80,917}, draw = function() return main_state.number(452) > 0 end, dst = {geo.num_random[3]}},
+			{id = "num_random_4", op = {80,917}, draw = function() return main_state.number(453) > 0 end, dst = {geo.num_random[4]}},
+			{id = "num_random_5", op = {80,917}, draw = function() return main_state.number(454) > 0 end, dst = {geo.num_random[5]}},
+			{id = "num_random_6", op = {80,917}, draw = function() return main_state.number(455) > 0 end, dst = {geo.num_random[6]}},
+			{id = "num_random_7", op = {80,917}, draw = function() return main_state.number(456) > 0 end, dst = {geo.num_random[7]}},
+			{id = "num_random_1", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(450) > 0 end, dst = {geo.num_random[1], {time = 500, a = 0}}},
+			{id = "num_random_2", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(451) > 0 end, dst = {geo.num_random[2], {time = 500, a = 0}}},
+			{id = "num_random_3", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(452) > 0 end, dst = {geo.num_random[3], {time = 500, a = 0}}},
+			{id = "num_random_4", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(453) > 0 end, dst = {geo.num_random[4], {time = 500, a = 0}}},
+			{id = "num_random_5", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(454) > 0 end, dst = {geo.num_random[5], {time = 500, a = 0}}},
+			{id = "num_random_6", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(455) > 0 end, dst = {geo.num_random[6], {time = 500, a = 0}}},
+			{id = "num_random_7", timer = 40, loop = -1, op = {81,917}, draw = function() return main_state.number(456) > 0 end, dst = {geo.num_random[7], {time = 500, a = 0}}},
 			
 			{id = "img_level_beginner",	blend = 2, op = {151}, dst = {geo.level}},
 			{id = "img_level_normal",	blend = 2, op = {152}, dst = {geo.level}},
