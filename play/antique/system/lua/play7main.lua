@@ -377,6 +377,20 @@ local function main()
 		{x = geo.note_dst[6].x, y = 250, w = geo.note_dst[6].w, h = 100},
 		{x = geo.note_dst[7].x, y = 250, w = geo.note_dst[7].w, h = 100}
 	}
+	geo.num_random		= {}
+	for i = 1, 7 do
+		geo.num_random[i] = {
+			x = geo.note_dst[i].x + (geo.note_dst[i].w / 2) - 12,
+			y = geo.lane.y - 62,
+			w = 24,
+			h = 28
+		}
+		if i % 2 == 0 then
+			geo.num_random[i].r = 64
+			geo.num_random[i].g = 160
+			geo.num_random[i].b = 255
+		end
+	end
 	if isSixtarNotes_Type1() or isSixtarNotes_Type2() then
 		geo.note_dst[1].x	= geo.note_dst[1].x
 		geo.note_dst[2].x	= geo.note_dst[1].x + 25 --
@@ -1144,6 +1158,15 @@ local function main()
 			{id = "num_combo",			src = "src_number_common_m", x = 0, y = 0, w = 190, h = 17, divx = 10, digit = 5, ref = 105},
 			{id = "num_speed",			src = "src_number_common_m", x = 0, y = 0, w = 190, h = 17, divx = 10, digit = 2, ref = 310},
 			{id = "num_speed_afterdot",	src = "src_number_common_m", x = 0, y = 0, w = 209, h = 17, divx = 11, digit = 2, ref = 311},
+
+			-- BMZ拡張: プレイ開始前に実効RANDOM配置を鍵盤色で表示する
+			{id = "num_random_1", src = "src_number_lane", x = 0, y = 20, w = 180, h = 20, divx = 10, digit = 1, ref = 450},
+			{id = "num_random_2", src = "src_number_lane", x = 0, y = 20, w = 180, h = 20, divx = 10, digit = 1, ref = 451},
+			{id = "num_random_3", src = "src_number_lane", x = 0, y = 20, w = 180, h = 20, divx = 10, digit = 1, ref = 452},
+			{id = "num_random_4", src = "src_number_lane", x = 0, y = 20, w = 180, h = 20, divx = 10, digit = 1, ref = 453},
+			{id = "num_random_5", src = "src_number_lane", x = 0, y = 20, w = 180, h = 20, divx = 10, digit = 1, ref = 454},
+			{id = "num_random_6", src = "src_number_lane", x = 0, y = 20, w = 180, h = 20, divx = 10, digit = 1, ref = 455},
+			{id = "num_random_7", src = "src_number_lane", x = 0, y = 20, w = 180, h = 20, divx = 10, digit = 1, ref = 456},
 			
 			{id = "num_judge_pg", src = "src_judge", x = 227, y = 0, w = 550, h = 252, divx = 10, divy = 3, digit = 6, ref = 75, cycle = 120},
 			{id = "num_judge_gr", src = "src_judge", x = 227, y = 252, w = 550, h = 168, divx = 10, divy = 2, digit = 6, ref = 75, cycle = 80},
@@ -1294,6 +1317,14 @@ local function main()
 			{id = "num_gauge",					dst = {geo.num_gauge}},
 			{id = "num_gauge_afterdot",			dst = {geo.num_gauge_ad}},
 			{id = "gauge",						dst = {geo.gauge}},
+
+			{id = "num_random_1", op = {80}, draw = function() return main_state.number(450) > 0 end, dst = {geo.num_random[1]}},
+			{id = "num_random_2", op = {80}, draw = function() return main_state.number(451) > 0 end, dst = {geo.num_random[2]}},
+			{id = "num_random_3", op = {80}, draw = function() return main_state.number(452) > 0 end, dst = {geo.num_random[3]}},
+			{id = "num_random_4", op = {80}, draw = function() return main_state.number(453) > 0 end, dst = {geo.num_random[4]}},
+			{id = "num_random_5", op = {80}, draw = function() return main_state.number(454) > 0 end, dst = {geo.num_random[5]}},
+			{id = "num_random_6", op = {80}, draw = function() return main_state.number(455) > 0 end, dst = {geo.num_random[6]}},
+			{id = "num_random_7", op = {80}, draw = function() return main_state.number(456) > 0 end, dst = {geo.num_random[7]}},
 			
 			{id = "img_level_beginner",	blend = 2, op = {151}, dst = {geo.level}},
 			{id = "img_level_normal",	blend = 2, op = {152}, dst = {geo.level}},
