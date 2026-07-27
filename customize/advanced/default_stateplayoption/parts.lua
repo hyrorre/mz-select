@@ -60,22 +60,30 @@ local function load()
 		{id = "bmz_select_hs_fix", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1},
 		{id = "bmz_select_arrange_2p", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1}
 	}
-	
+
+	parts.panel = {
+		{id = "bmz_select_option_hit", color = "00000000"}
+	}
+
 	parts.destination = {
 		{id = "default_stateplayoption_bg",				dst = {{x = parts_position.x, y = parts_position.y, w = 996, h = 50}}},
 		{id = "default_stateplayoption_item_name",		dst = {{x = parts_position.x, y = parts_position.y + 23, w = 996, h = 60}}},
-		
-		{id = "bmz_select_arrange",		act = 42, dst = {{x = parts_position.x + 83, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "bmz_select_gauge",		act = 40, dst = {{x = parts_position.x + 249, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "bmz_select_double_option",	act = 54, dst = {{x = parts_position.x + 415, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "bmz_select_hs_fix",		act = 55, dst = {{x = parts_position.x + 581, y = parts_position.y + 5, w = 166, h = 19}}},
-		{id = "bmz_select_arrange_2p",		act = 43, dst = {{x = parts_position.x + 747, y = parts_position.y + 5, w = 166, h = 19}}},
 
 		--{id = "default_stateplayoption_duration",		dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 20, h = 19}}},
 		{id = "default_stateplayoption_duration_green",	dst = {{x = parts_position.x + 873, y = parts_position.y + 5, w = 20, h = 19}}}
 	}
-	
-	return parts	
+
+	local function append_option(id, act, x, w)
+		table.insert(parts.destination, {id = id, dst = {{x = x + w / 2, y = parts_position.y + 5, w = w, h = 19}}})
+		table.insert(parts.destination, {id = "bmz_select_option_hit", act = act, dst = {{x = x, y = parts_position.y + 5, w = w, h = 19}}})
+	end
+	append_option("bmz_select_arrange", 42, parts_position.x, 166)
+	append_option("bmz_select_gauge", 40, parts_position.x + 166, 166)
+	append_option("bmz_select_double_option", 54, parts_position.x + 332, 166)
+	append_option("bmz_select_hs_fix", 55, parts_position.x + 498, 166)
+	append_option("bmz_select_arrange_2p", 43, parts_position.x + 664, 166)
+
+	return parts
 end
 
 return {

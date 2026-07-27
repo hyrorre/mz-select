@@ -73,7 +73,9 @@ function load_parts()
 	skin.value = {}
 	
 	skin.text = {}
-	
+
+	skin.panel = {}
+
 	skin.songlist = {}
 	skin.songlist.id = nil
 	skin.songlist.center = nil
@@ -121,6 +123,7 @@ function load_parts()
 					append_all(skin.imageset, parts.imageset)
 					append_all(skin.value, parts.value)
 					append_all(skin.text, parts.text)
+					append_all(skin.panel, parts.panel)
 					append_all(skin.slider, parts.slider)
 					if parts.songlist then
 						skin.songlist.id = parts.songlist.id
