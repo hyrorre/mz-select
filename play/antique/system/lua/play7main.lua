@@ -41,7 +41,8 @@ local header = {
 		}},
 		{name = "FAST/SLOW", category = "op6", item = {
 			{name = "OFF", op = 907},
-			{name = "ON", op = 908}
+			{name = "ON", op = 908},
+			{name = "SCRATCH/KEYS別 (BMZ)", op = 909}
 		}},
 		{name = "打鍵ログ(同梱リザルト用)", category = "op7", item = {
 			{name = "OFF", op = 930},
@@ -485,6 +486,12 @@ local function main()
 	geo.img_judge		= {time = 0, x = geo.lane.x + 143 + value_offset.judge.x, y = geo.lane.y + 123 + value_offset.judge.y, w = 227, h = 84}
 	geo.num_judge		= {time = 0, x = 237, y = 0, w = 55, h = 84}
 	geo.judgedetail		= {x = geo.lane.x + 286 + value_offset.fs.x, y = geo.img_judge.y + geo.img_judge.h + 15 + value_offset.fs.y, w = 72, h = 20}
+	geo.judgedetail_key	= {x = geo.lane.x + 360 + value_offset.fs.x, y = geo.judgedetail.y, w = 72, h = 20}
+	geo.judgedetail_scratch = {x = geo.lane.x + 244 + value_offset.fs.x, y = geo.judgedetail.y, w = 108, h = 20}
+	if isScratchRight() then
+		geo.judgedetail_key.x = geo.lane.x + 244 + value_offset.fs.x
+		geo.judgedetail_scratch.x = geo.lane.x + 324 + value_offset.fs.x
+	end
 	geo.num_ghost		= {x = geo.lane.x + 146 + value_offset.ghost.x, y = geo.img_judge.y + geo.img_judge.h + 15 + value_offset.ghost.y, w = 18, h = 20}
 	geo.bomb			= {
 		{time = 0, x = geo.note_dst[1].x + (geo.note_dst[1].w / 2) - 200, y = geo.lane.y - 144, w = 400, h = 300},
@@ -620,6 +627,7 @@ local function main()
 		{id = "src_cover_finish",		path = "../customize/cover/*.png|4|"},
 		{id = "src_judge",				path = "../customize/judge/*.png"},
 		{id = "src_judgedetail",		path = "image/judgedetail.png"},
+		{id = "src_judgedetail_scratch",	path = "image/judgedetail_scratch.png"},
 		{id = "src_bomb",				path = "../customize/bomb/*.png"},
 		
 		-- GRAPH
@@ -1105,6 +1113,8 @@ local function main()
 			
 			{id = "img_fast", src = "src_judgedetail", x = 0, y = 40, w = 72, h = 20},
 			{id = "img_slow", src = "src_judgedetail", x = 0, y = 60, w = 72, h = 20},
+			{id = "img_s_fast", src = "src_judgedetail_scratch", x = 0, y = 0, w = 108, h = 20},
+			{id = "img_s_slow", src = "src_judgedetail_scratch", x = 0, y = 20, w = 108, h = 20},
 			
 			{id = "img_bomb1", src = "src_bomb", x = 0, y = 0, w = 6400, h = 300, divx = 16, timer = 51, cycle = 251},
 			{id = "img_bomb2", src = "src_bomb", x = 0, y = 0, w = 6400, h = 300, divx = 16, timer = 52, cycle = 251},
@@ -1410,6 +1420,10 @@ local function main()
 			
 			{id = "img_fast", timer = 46, loop = -1, offsets = {3, 32, 33}, op = {908, 1242}, dst = {geo.judgedetail, {time = 500}}},
 			{id = "img_slow", timer = 46, loop = -1, offsets = {3, 32, 33}, op = {908, 1243}, dst = {geo.judgedetail, {time = 500}}},
+			{id = "img_s_fast", timer = 19010, loop = -1, offsets = {3, 32, 33}, op = {909, 19030}, dst = {geo.judgedetail_scratch, {time = 500}}},
+			{id = "img_s_slow", timer = 19010, loop = -1, offsets = {3, 32, 33}, op = {909, 19040}, dst = {geo.judgedetail_scratch, {time = 500}}},
+			{id = "img_fast", timer = 19011, loop = -1, offsets = {3, 32, 33}, op = {909, 19031}, dst = {geo.judgedetail_key, {time = 500}}},
+			{id = "img_slow", timer = 19011, loop = -1, offsets = {3, 32, 33}, op = {909, 19041}, dst = {geo.judgedetail_key, {time = 500}}},
 			
 			{id = "num_ghost_mybest",	timer = 46, loop = -1, offsets = {3, 32, 33}, op = {905}, dst = {geo.num_ghost, {time = 500}}},
 			{id = "num_ghost_target",	timer = 46, loop = -1, offsets = {3, 32, 33}, op = {906}, dst = {geo.num_ghost, {time = 500}}},
