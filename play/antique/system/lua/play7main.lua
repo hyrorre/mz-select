@@ -1420,10 +1420,10 @@ local function main()
 			
 			{id = "img_fast", timer = 46, loop = -1, offsets = {3, 32, 33}, op = {908, 1242}, dst = {geo.judgedetail, {time = 500}}},
 			{id = "img_slow", timer = 46, loop = -1, offsets = {3, 32, 33}, op = {908, 1243}, dst = {geo.judgedetail, {time = 500}}},
-			{id = "img_s_fast", timer = 19010, loop = -1, offsets = {3, 32, 33}, op = {909, 19030}, dst = {geo.judgedetail_scratch, {time = 500}}},
-			{id = "img_s_slow", timer = 19010, loop = -1, offsets = {3, 32, 33}, op = {909, 19040}, dst = {geo.judgedetail_scratch, {time = 500}}},
-			{id = "img_fast", timer = 19011, loop = -1, offsets = {3, 32, 33}, op = {909, 19031}, dst = {geo.judgedetail_key, {time = 500}}},
-			{id = "img_slow", timer = 19011, loop = -1, offsets = {3, 32, 33}, op = {909, 19041}, dst = {geo.judgedetail_key, {time = 500}}},
+			{id = "img_s_fast", timer = 19010, loop = -1, offsets = {3, 32, 33}, op = {909, 19030}, dst = {geo.judgedetail_scratch, {time = 800}}},
+			{id = "img_s_slow", timer = 19010, loop = -1, offsets = {3, 32, 33}, op = {909, 19040}, dst = {geo.judgedetail_scratch, {time = 800}}},
+			{id = "img_fast", timer = 19011, loop = -1, offsets = {3, 32, 33}, op = {909, 19031}, dst = {geo.judgedetail_key, {time = 800}}},
+			{id = "img_slow", timer = 19011, loop = -1, offsets = {3, 32, 33}, op = {909, 19041}, dst = {geo.judgedetail_key, {time = 800}}},
 			
 			{id = "num_ghost_mybest",	timer = 46, loop = -1, offsets = {3, 32, 33}, op = {905}, dst = {geo.num_ghost, {time = 500}}},
 			{id = "num_ghost_target",	timer = 46, loop = -1, offsets = {3, 32, 33}, op = {906}, dst = {geo.num_ghost, {time = 500}}},
