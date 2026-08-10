@@ -79,17 +79,32 @@ local function load()
 			"default_stateplayoption_random_11",
 			"default_stateplayoption_random_12",
 		}},
+		{id = "default_stateplayoption_option_gauge", ref = 40, images = {
+			"default_stateplayoption_gauge_1",
+			"default_stateplayoption_gauge_2",
+			"default_stateplayoption_gauge_3",
+			"default_stateplayoption_gauge_4",
+			"default_stateplayoption_gauge_5",
+			"default_stateplayoption_gauge_6",
+		}},
+		{id = "default_stateplayoption_option_dp", ref = 54, images = {
+			"default_stateplayoption_dp_1",
+			"default_stateplayoption_dp_2",
+			"default_stateplayoption_dp_3",
+			"default_stateplayoption_dp_4",
+		}},
+		{id = "default_stateplayoption_option_hsfix", ref = 55, images = {
+			"default_stateplayoption_speed_1",
+			"default_stateplayoption_speed_2",
+			"default_stateplayoption_speed_3",
+			"default_stateplayoption_speed_4",
+			"default_stateplayoption_speed_5",
+		}},
 	}
 
 	parts.value = {
 		--{id = "default_stateplayoption_duration",		src = src1_id, x = 0, y = 250, w = 200, h = 19, align = 2, divx = 10, digit = 4, ref = 312},
 		{id = "default_stateplayoption_duration_green",	src = src1_id, x = 0, y = 250, w = 200, h = 19, align = 2, divx = 10, digit = 4, ref = 313}
-	}
-
-	parts.text = {
-		{id = "bmz_select_gauge", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1},
-		{id = "bmz_select_double_option", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1},
-		{id = "bmz_select_hs_fix", font = "font-default-commonparts-m_select1", size = 18, align = 1, overflow = 1}
 	}
 
 	parts.panel = {
@@ -103,20 +118,20 @@ local function load()
 		--{id = "default_stateplayoption_duration",		dst = {{x = parts_position.x + 0, y = parts_position.y + 5, w = 20, h = 19}}},
 		{id = "default_stateplayoption_duration_green",	dst = {{x = parts_position.x + 873, y = parts_position.y + 5, w = 20, h = 19}}},
 		{id = "default_stateplayoption_random",	dst = {{x = parts_position.x, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "default_stateplayoption_option_gauge",	dst = {{x = parts_position.x + 166, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "default_stateplayoption_option_dp",	dst = {{x = parts_position.x + 332, y = parts_position.y + 5, w = 166, h = 19}}},
+		{id = "default_stateplayoption_option_hsfix",	dst = {{x = parts_position.x + 498, y = parts_position.y + 5, w = 166, h = 19}}},
 		{id = "default_stateplayoption_random_2p",	dst = {{x = parts_position.x + 664, y = parts_position.y + 5, w = 166, h = 19}}}
 	}
 
-	local function append_option(id, act, x, w)
-		if id then
-			table.insert(parts.destination, {id = id, dst = {{x = x + w / 2, y = parts_position.y + 5, w = w, h = 19}}})
-		end
+	local function append_option_hit(act, x, w)
 		table.insert(parts.destination, {id = "bmz_select_option_hit", act = act, click = 2, dst = {{x = x, y = parts_position.y + 5, w = w, h = 19}}})
 	end
-	append_option(nil, 42, parts_position.x, 166)
-	append_option("bmz_select_gauge", 40, parts_position.x + 166, 166)
-	append_option("bmz_select_double_option", 54, parts_position.x + 332, 166)
-	append_option("bmz_select_hs_fix", 55, parts_position.x + 498, 166)
-	append_option(nil, 43, parts_position.x + 664, 166)
+	append_option_hit(42, parts_position.x, 166)
+	append_option_hit(40, parts_position.x + 166, 166)
+	append_option_hit(54, parts_position.x + 332, 166)
+	append_option_hit(55, parts_position.x + 498, 166)
+	append_option_hit(43, parts_position.x + 664, 166)
 
 	return parts
 end
