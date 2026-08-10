@@ -14,15 +14,16 @@ local function load()
 	}
 	
 	parts.source = {
-		{id = "src-default-optionpanel-panel1", path = "customize/advanced/default_optionpanel4/panel1.png"},
+		{id = "src-default-optionpanel-panel1", path = "customize/advanced/default_optionpanel4/panel1_bmz.png"},
 		{id = "src-default-optionpanel-panel2", path = "customize/advanced/default_optionpanel4/panel2.png"},
 		{id = "src-default-optionpanel-panel3", path = "customize/advanced/default_optionpanel4/panel3.png"},
 		{id = "src-default-optionpanel-cursor", path = "customize/advanced/default_optionpanel4/cursor.png"},
+		{id = "src-default-optionpanel-random-cursor-bmz", path = "customize/advanced/default_optionpanel4/random_cursor_bmz.png"},
 		{id = "src-default-optionpanel-message", path = "customize/advanced/default_optionpanel4/op_message.png"},
 	}
 
 	parts.image = {
-		{id = "default_optionpanel_option_panel1",				src = "src-default-optionpanel-panel1", x = 0, y = 0, w = 1315, h = 1024},
+		{id = "default_optionpanel_option_panel1",				src = "src-default-optionpanel-panel1", x = 0, y = 0, w = 1315, h = 1124},
 		
 		-- 追加 ターゲット 11
 		--[[ 0.8.5にて廃止
@@ -40,16 +41,18 @@ local function load()
 		--]]
 		
 		-- random
-		{id = "default_optionpanel_option_selector12_1",		src = "src-default-optionpanel-cursor", x = 616, y = 500, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_2",		src = "src-default-optionpanel-cursor", x = 616, y = 450, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_3",		src = "src-default-optionpanel-cursor", x = 616, y = 400, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_4",		src = "src-default-optionpanel-cursor", x = 616, y = 350, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_5",		src = "src-default-optionpanel-cursor", x = 616, y = 300, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_6",		src = "src-default-optionpanel-cursor", x = 616, y = 250, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_7",		src = "src-default-optionpanel-cursor", x = 616, y = 200, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_8",		src = "src-default-optionpanel-cursor", x = 616, y = 150, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_9",		src = "src-default-optionpanel-cursor", x = 616, y = 100, w = 170, h = 500},
-		{id = "default_optionpanel_option_selector12_10",		src = "src-default-optionpanel-cursor", x = 616, y = 50, w = 170, h = 500},
+		{id = "default_optionpanel_option_selector12_1",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 550, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_2",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 500, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_3",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 450, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_4",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 400, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_5",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 350, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_6",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 300, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_7",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 250, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_8",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 200, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_9",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 150, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_10",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 100, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_11",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 50, w = 170, h = 600},
+		{id = "default_optionpanel_option_selector12_12",		src = "src-default-optionpanel-random-cursor-bmz", x = 0, y = 0, w = 170, h = 600},
 		
 		-- gauge
 		{id = "default_optionpanel_option_selector13_1",		src = "src-default-optionpanel-cursor", x = 616, y = 500, w = 170, h = 300},
@@ -113,12 +116,13 @@ local function load()
 			"default_optionpanel_option_selector11_11"
 		}},
 		--]]
-		{id = "default_optionpanel_option_random", ref = 42, images = {
+		{id = "default_optionpanel_option_random", ref = 344, images = {
 			"default_optionpanel_option_selector12_1","default_optionpanel_option_selector12_2",
 			"default_optionpanel_option_selector12_3","default_optionpanel_option_selector12_4",
 			"default_optionpanel_option_selector12_5","default_optionpanel_option_selector12_6",
 			"default_optionpanel_option_selector12_7","default_optionpanel_option_selector12_8",
-			"default_optionpanel_option_selector12_9","default_optionpanel_option_selector12_10"
+			"default_optionpanel_option_selector12_9","default_optionpanel_option_selector12_10",
+			"default_optionpanel_option_selector12_11","default_optionpanel_option_selector12_12"
 		}},
 		{id = "default_optionpanel_option_gauge", ref = 40, images = {
 			"default_optionpanel_option_selector13_1","default_optionpanel_option_selector13_2",
@@ -130,12 +134,13 @@ local function load()
 			"default_optionpanel_option_selector14_3","default_optionpanel_option_selector14_4",
 			"default_optionpanel_option_selector14_5"
 		}},
-		{id = "default_optionpanel_option_random2", ref = 43, images = {
+		{id = "default_optionpanel_option_random2", ref = 345, images = {
 			"default_optionpanel_option_selector12_1","default_optionpanel_option_selector12_2",
 			"default_optionpanel_option_selector12_3","default_optionpanel_option_selector12_4",
 			"default_optionpanel_option_selector12_5","default_optionpanel_option_selector12_6",
 			"default_optionpanel_option_selector12_7","default_optionpanel_option_selector12_8",
-			"default_optionpanel_option_selector12_9","default_optionpanel_option_selector12_10"
+			"default_optionpanel_option_selector12_9","default_optionpanel_option_selector12_10",
+			"default_optionpanel_option_selector12_11","default_optionpanel_option_selector12_12"
 		}},
 		{id = "default_optionpanel_option_dp", ref = 54, images = {
 			"default_optionpanel_option_selector15_1","default_optionpanel_option_selector15_2",
@@ -212,13 +217,13 @@ local function load()
 	parts.destination = {
 		{id = -110, loop = 300, op = {21}, timer = 21,	dst = {{time = 0, x = 0, y = 0, w = 1920, h = 1080, a = 0},{time = 300, a = 168}}},
 		{id = -110, loop = 300, op = {-21}, timer = 31,	dst = {{time = 0, x = 0, y = 0, w = 1920, h = 1080, a = 168},{time = 300, a = 0}}},
-		{id = "default_optionpanel_option_panel1",	loop = 300, op = {21}, timer = 21,	dst = {{time = 0, x = -1024, y = 28, w = 1315, h = 1024, acc = 2},{time = 300, x = 0}}},
-		{id = "default_optionpanel_option_panel1",	loop = 300, op = {-21}, timer = 31,	dst = {{time = 0, x = 0, y = 28, w = 1315, h = 1024, acc = 2},{time = 300, x = -1315}}},
+		{id = "default_optionpanel_option_panel1",	loop = 300, op = {21}, timer = 21,	dst = {{time = 0, x = -1024, y = -22, w = 1315, h = 1124, acc = 2},{time = 300, x = 0}}},
+		{id = "default_optionpanel_option_panel1",	loop = 300, op = {-21}, timer = 31,	dst = {{time = 0, x = 0, y = -22, w = 1315, h = 1124, acc = 2},{time = 300, x = -1315}}},
 		--{id = "default_optionpanel_option_target",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 27, y = 40, w = 170, h = 550}}},
-		{id = "default_optionpanel_option_random",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 318, y = 90, w = 170, h = 500}}},
+		{id = "default_optionpanel_option_random",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 318, y = 40, w = 170, h = 600}}},
 		{id = "default_optionpanel_option_gauge",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 518, y = 290, w = 170, h = 300}}},
 		{id = "default_optionpanel_option_hsfix",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 918, y = 340, w = 170, h = 250}}},
-		{id = "default_optionpanel_option_random2",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 1118, y = 90, w = 170, h = 500}}},
+		{id = "default_optionpanel_option_random2",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 1118, y = 40, w = 170, h = 600}}},
 		{id = "default_optionpanel_option_dp",		blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 718, y = 390, w = 170, h = 200}}},
 
 		{id = -110, loop = 300, op = {22}, timer = 22,	dst = {{time = 0, x = 0, y = 0, w = 1920, h = 1080, a = 0},{time = 300, a = 168},}},
