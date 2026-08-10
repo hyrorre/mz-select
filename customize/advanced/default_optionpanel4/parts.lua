@@ -221,10 +221,10 @@ local function load()
 		{id = "default_optionpanel_option_panel1",	loop = 300, op = {-21}, timer = 31,	dst = {{time = 0, x = 0, y = -22, w = 1315, h = 1124, acc = 2},{time = 300, x = -1315}}},
 		--{id = "default_optionpanel_option_target",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 27, y = 40, w = 170, h = 550}}},
 		{id = "default_optionpanel_option_random",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 318, y = 40, w = 170, h = 600}}},
-		{id = "default_optionpanel_option_gauge",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 518, y = 290, w = 170, h = 300}}},
-		{id = "default_optionpanel_option_hsfix",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 918, y = 340, w = 170, h = 250}}},
+		{id = "default_optionpanel_option_gauge",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 518, y = 340, w = 170, h = 300}}},
+		{id = "default_optionpanel_option_hsfix",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 918, y = 390, w = 170, h = 250}}},
 		{id = "default_optionpanel_option_random2",	blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 1118, y = 40, w = 170, h = 600}}},
-		{id = "default_optionpanel_option_dp",		blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 718, y = 390, w = 170, h = 200}}},
+		{id = "default_optionpanel_option_dp",		blend = 2,loop = 300,	op = {21}, timer = 21,	dst = {{time = 300, x = 718, y = 440, w = 170, h = 200}}},
 
 		{id = -110, loop = 300, op = {22}, timer = 22,	dst = {{time = 0, x = 0, y = 0, w = 1920, h = 1080, a = 0},{time = 300, a = 168},}},
 		{id = -110, loop = 300, op = {-22}, timer = 32,	dst = {{time = 0, x = 0, y = 0, w = 1920, h = 1080, a = 168},{time = 300, a = 0}}},
