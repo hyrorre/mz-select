@@ -16,17 +16,17 @@ local function load()
 	}
 
 	parts.text = {
-		{id = "bmz_ln_force_badge", font = "font-default-commonparts-mplus-1c-bold", size = 14, align = 1, constantText = "FORCE"}
+		{id = "bmz_ln_force_badge", font = "font-default-commonparts-mplus-1c-bold", size = 14, align = 2, constantText = "FORCE"}
 	}
 
 	parts.destination = {
-		{id = "bmz_ln_force_badge", op = {19168}, clickable = false, dst = {{x = parts_position.x + 435, y = parts_position.y + 52, w = 150, h = 14, r = 255, g = 170, b = 64}}},
 		{id = "default_modechange_modeset",		dst = {{x = parts_position.x, y = parts_position.y, w = 150, h = 50}}},
 		{id = "default_modechange_sortset",		dst = {{x = parts_position.x + 180, y = parts_position.y, w = 150, h = 50}}},
 		{id = "default_modechange_lnmodeset",	dst = {{x = parts_position.x + 360, y = parts_position.y, w = 150, h = 50}}},
 		{id = "default_modechange_rect",		dst = {{x = parts_position.x, y = parts_position.y, w = 150, h = 50}}, mouseRect = {x = 0, y = 0, w = 150, h = 50}},
 		{id = "default_modechange_rect",		dst = {{x = parts_position.x + 180, y = parts_position.y, w = 150, h = 50}}, mouseRect = {x = 0, y = 0, w = 150, h = 50}},
-		{id = "default_modechange_rect",		dst = {{x = parts_position.x + 360, y = parts_position.y, w = 150, h = 50}}, mouseRect = {x = 0, y = 0, w = 150, h = 50}}
+		{id = "default_modechange_rect",		dst = {{x = parts_position.x + 360, y = parts_position.y, w = 150, h = 50}}, mouseRect = {x = 0, y = 0, w = 150, h = 50}},
+		{id = "bmz_ln_force_badge", op = {19168}, clickable = false, dst = {{x = parts_position.x + 504, y = parts_position.y + 33, w = 60, h = 14, r = 255, g = 255, b = 255}}}
 	}
 	
 	return parts	
