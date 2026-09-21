@@ -19,13 +19,13 @@ local function load()
 	}
 
 	parts.text = {
-		{id = "bmz_select_mode", font = "font-default-commonparts-mplus-1c-bold", size = 30, align = 1, overflow = 1},
+		{id = "bmz_select_mode", font = "font-default-commonparts-mplus-1c-bold", size = 26, align = 1, overflow = 1},
 		{id = "bmz_ln_force_badge", font = "font-default-commonparts-mplus-1c-bold", size = 14, align = 2, constantText = "FORCE"}
 	}
 
 	parts.destination = {
 		{id = "default_modechange_frame", dst = {{x = parts_position.x, y = parts_position.y, w = 150, h = 50}}},
-		{id = "bmz_select_mode", dst = {{x = parts_position.x + 75, y = parts_position.y + 10, w = 150, h = 30}}},
+		{id = "bmz_select_mode", dst = {{x = parts_position.x + 75, y = parts_position.y + 12, w = 150, h = 26}}},
 		{id = "default_modechange_sortset",		dst = {{x = parts_position.x + 180, y = parts_position.y, w = 150, h = 50}}},
 		{id = "default_modechange_lnmodeset",	dst = {{x = parts_position.x + 360, y = parts_position.y, w = 150, h = 50}}},
 		{id = "default_modechange_rect",	act = 11, click = 2, dst = {{x = parts_position.x, y = parts_position.y, w = 150, h = 50}}, mouseRect = {x = 0, y = 0, w = 150, h = 50}},
