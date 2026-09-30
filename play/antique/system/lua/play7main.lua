@@ -1688,11 +1688,11 @@ local function main()
 			img_frame_off_graph1p = true, img_frame_off_graph2p = true,
 			img_frame_play1p = true, img_frame_play2p = true,
 			img_frame_off_play1p = true, img_frame_off_play2p = true,
-			img_frame_lane1p = true, img_frame_lane2p = true, img_frame_laneSixtar = true,
 			img_frame_bga = true, img_frame_bga_load = true, img_frame_bga_play = true
 		}
+		-- Leave lane backgrounds and their brightness overlay out of panel opacity.
 		for _, destination in ipairs(skin.destination) do
-			if panels[destination.id] or (destination.id == -110 and destination.dst[1] == geo.lane) then
+			if panels[destination.id] then
 				local frames = {}
 				for i, frame in ipairs(destination.dst) do
 					local copy = {}
