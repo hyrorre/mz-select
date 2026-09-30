@@ -1,4 +1,11 @@
 main_state = require("main_state")
+local function percent_options(first_op, maximum)
+	local items = {}
+	for value = 0, maximum, 10 do
+		table.insert(items, {name = value .. "%", op = first_op + value / 10})
+	end
+	return items
+end
 local header = {
 	type = 0,
 	name = "antique (m-select)",
@@ -11,10 +18,15 @@ local header = {
 	close = 1000,
 	fadeout = 1000,
 	property = {
-		{name = "Ambientモード (BMZ)", category = "ambient", item = {
+		{name = "Ambient", category = "ambient", item = {
 			{name = "OFF", op = 918},
 			{name = "ON", op = 919}
 		}, def = "OFF"},
+		{name = "Ambient表示方式", category = "ambientMode", item = {
+			{name = "全体", op = 2020}, {name = "Spread", op = 2021}
+		}, def = "全体"},
+		{name = "Spread範囲 (%)", category = "ambientSpread", item = percent_options(2040, 200), def = "20%"},
+		{name = "Ambientぼかし度 (%)", category = "ambientBlur", item = percent_options(2080, 100), def = "50%"},
 		{name = "Ambientパネル透明度", category = "ambientAlpha", item = {
 			{name = "0% (不透明)", op = 2000},
 			{name = "10%", op = 2001},
@@ -148,6 +160,9 @@ local header = {
 	category = {
 		{name = "オプション", item = {
 			"ambient",
+			"ambientMode",
+			"ambientSpread",
+			"ambientBlur",
 			"ambientAlpha",
 			"op14",
 			"op4",
@@ -240,7 +255,10 @@ local function main()
 	local function isSixtarNotes_Type2() return skin_config.option["ノーツタイプ"] == 993 end
 	
 	local function EnableVoice() return skin_config.option["コンボボイス"] == 1001 end
-	local ambient = skin_config.option["Ambientモード (BMZ)"] == 919
+	local ambient = skin_config.option["Ambient"] == 919
+	local ambientSpread = skin_config.option["Ambient表示方式"] == 2021
+	local spreadPercent = math.max(0, math.min(200, ((skin_config.option["Spread範囲 (%)"] or 2042) - 2040) * 10))
+	local blurPercent = math.max(0, math.min(100, ((skin_config.option["Ambientぼかし度 (%)"] or 2085) - 2080) * 10))
 	local panelOpacity = 1 - math.max(0, math.min(10,
 		(skin_config.option["Ambientパネル透明度"] or 2004) - 2000)) / 10
 	
@@ -721,13 +739,18 @@ local function main()
 		append_all(skin.destination, parts.bg.destination)
 		if ambient then
 			-- BMZ composites the current BGA layers before blurring; the foreground stays sharp.
+			local function ambient_destination(id, op, timer)
+				local rect = ambientSpread and geo.bga_main or geo.bg
+				return {id = id, op = op, timer = timer, ambient = true,
+					ambientMode = ambientSpread and "spread" or "full",
+					ambientSpread = spreadPercent, ambientBlur = blurPercent,
+					stretch = ambientSpread and 1 or 3,
+					dst = {{x = rect.x, y = rect.y, w = rect.w, h = rect.h, a = 210}}}
+			end
 			append_all(skin.destination, {
-				{id = "bga", op = {171,980}, bmzAmbient = true, stretch = 3,
-					dst = {{x = 0, y = 0, w = 1920, h = 1080, a = 210}}},
-				{id = "img_bga_bgi", op = {170,980}, timer = 41, bmzAmbient = true, stretch = 3,
-					dst = {{x = 0, y = 0, w = 1920, h = 1080, a = 210}}},
-				{id = "img_bga_bgi", op = {981}, timer = 41, bmzAmbient = true, stretch = 3,
-					dst = {{x = 0, y = 0, w = 1920, h = 1080, a = 210}}}
+				ambient_destination("bga", {171,980}),
+				ambient_destination("img_bga_bgi", {170,980}, 41),
+				ambient_destination("img_bga_bgi", {981}, 41)
 			})
 		end
 		--
@@ -1672,13 +1695,12 @@ local function main()
 	end
 	
 	if ambient then
-		-- The background-size preset uses Ambient itself as the full-screen BGA.
-		if BGA_BG() then
-			for i = #skin.destination, 1, -1 do
-				local destination = skin.destination[i]
-				if not destination.bmzAmbient and (destination.id == "bga" or destination.id == "img_bga_bgi") then
-					table.remove(skin.destination, i)
-				end
+		-- Remove the old dim cover copy. The background-size preset also hides the sharp copy.
+		for i = #skin.destination, 1, -1 do
+			local destination = skin.destination[i]
+			if not destination.ambient and (destination.id == "bga" or destination.id == "img_bga_bgi")
+				and (BGA_BG() or destination.dst[1] == geo.bga_bg) then
+				table.remove(skin.destination, i)
 			end
 		end
 		-- Copy frames before changing alpha: geometry tables are shared with other parts.
