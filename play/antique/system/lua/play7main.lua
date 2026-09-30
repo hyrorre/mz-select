@@ -145,7 +145,8 @@ local header = {
 		{name = "グラフ背景の明るさ(-255 ~ 0)",	category = "offset2", id = 51, a = true},
 		{name = "キービームの明るさ(-255 ~ 0)",	category = "offset3", id = 52, a = true},
 		{name = "キービームの長さ",				category = "offset4", id = 53, h = true},
-		{name = "BGAの明るさ(-255 ~ 0)",		category = "offset5", id = 54, a = true},
+		{name = "前面BGAの明るさ(-255 ~ 0)",	category = "offset5", id = 54, a = true},
+		{name = "背景/Ambient BGAの明るさ(-255 ~ 0)", category = "offset14", id = 65, a = true},
 		{name = "小節線の明るさ(-255 ~ 0)",		category = "offset6", id = 55, a = true},
 		{name = "判定文字の表示位置",			category = "offset7", id = 56, x = true, y = true},
 		{name = "ゴーストの表示位置",			category = "offset8", id = 57, x = true, y = true},
@@ -178,6 +179,7 @@ local header = {
 			"op13",
 			"offset12",
 			"offset5",
+			"offset14",
 			"op8",
 			"op9",
 			"op7",
@@ -274,7 +276,8 @@ local function main()
 		h = skin_config.offset["キービームの長さ"].h
 	}
 	value_offset.bga = {
-		a = skin_config.offset["BGAの明るさ(-255 ~ 0)"].a * -1,
+		front = math.max(0, math.min(255, 255 + skin_config.offset["前面BGAの明るさ(-255 ~ 0)"].a)),
+		background = math.max(0, math.min(255, 255 + skin_config.offset["背景/Ambient BGAの明るさ(-255 ~ 0)"].a)),
 		x = skin_config.offset["BGAの表示位置"].x
 	}
 	value_offset.graph = {
@@ -771,7 +774,7 @@ local function main()
 				{id = "img_bga_bgi", timer = 41, loop = 0, op = {981}, filter = 1, stretch = 3, dst = {geo.bga_bg}},
 				{id = "img_bga_bgi", timer = 41, loop = 0, op = {981}, filter = 1, stretch = 1, dst = {geo.bga_main}},
 				
-				{id = -110, loop = 500, dst = {geo.bga, {time = 500, a = value_offset.bga.a, acc = 2}}},
+				{id = -110, loop = 500, dst = {geo.bga, {time = 500, a = 0, acc = 2}}},
 				
 				{id = -101, filter = 1, stretch = 1,						op = {80, 195}, dst = {geo.bga_main}}, -- BACKBMP
 				{id = -101, filter = 1, stretch = 1, timer = 40, loop = -1,	op = {81, 195}, dst = {geo.bga_main, {time = 500, a = 0}}},
@@ -813,7 +816,7 @@ local function main()
 				{id = "img_bga_bgi", timer = 41, loop = 0, op = {981}, filter = 1, stretch = 3, dst = {geo.bga_bg}},
 				{id = "img_bga_bgi", timer = 41, loop = 0, op = {981}, filter = 1, stretch = 1, dst = {geo.bga_main}},
 				
-				{id = -110, loop = 500, dst = {geo.bga_main, {time = 500, a = value_offset.bga.a, acc = 2}}},
+				{id = -110, loop = 500, dst = {geo.bga_main, {time = 500, a = 0, acc = 2}}},
 				
 				{id = -101, filter = 1, stretch = 1,						op = {80, 195}, dst = {geo.backbmp}}, -- BACKBMP
 				{id = -101, filter = 1, stretch = 1, timer = 40, loop = -1,	op = {81, 195}, dst = {geo.backbmp, {time = 500, a = 0}}},
@@ -866,7 +869,7 @@ local function main()
 				{id = "img_bga_bgi", timer = 41, loop = 0, op = {981}, filter = 1, stretch = 3, dst = {geo.bga_bg}},
 				{id = "img_bga_bgi", timer = 41, loop = 0, op = {981}, filter = 1, stretch = 1, dst = {geo.bga_main}},
 				
-				{id = -110, loop = 500, dst = {geo.bga, {time = 500, a = value_offset.bga.a, acc = 2}}},
+				{id = -110, loop = 500, dst = {geo.bga, {time = 500, a = 0, acc = 2}}},
 				
 				{id = -101, filter = 1, stretch = 1,						op = {80, 195}, dst = {geo.bga_main}}, -- BACKBMP
 				{id = -101, filter = 1, stretch = 1, timer = 40, loop = -1,	op = {81, 195}, dst = {geo.bga_main, {time = 500, a = 0}}},
@@ -1726,6 +1729,18 @@ local function main()
 				end
 				destination.dst = frames
 			end
+		end
+	end
+	-- Tint the actual images, keeping letterbox space, the other BGA layer, and alpha unchanged.
+	-- The old black rectangles above now only provide the initial 500ms fade-in.
+	for _, destination in ipairs(skin.destination) do
+		if destination.id == "bga" or destination.id == "img_bga_bgi" then
+			local background = destination.ambient or BGA_BG() or destination.dst[1] == geo.bga_bg
+			local brightness = background and value_offset.bga.background or value_offset.bga.front
+			local frame = {}
+			for key, value in pairs(destination.dst[1]) do frame[key] = value end
+			frame.r, frame.g, frame.b = brightness, brightness, brightness
+			destination.dst = {frame}
 		end
 	end
 	return skin

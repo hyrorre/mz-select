@@ -13,6 +13,10 @@ antiqueのBMZ拡張:
 ・ON時は従来の暗いBGA背景を省き、鮮明なBGAとAmbientを表示します。
   BGAサイズが「背景(1920x1080)」の場合は選択した全体／SpreadのAmbientだけを表示します。
 この演出にはambient / ambientMode / ambientSpread / ambientBlurに対応したBMZ Playerが必要です。
+・「前面BGAの明るさ(-255 ~ 0)」: 前面の映像部分だけの明るさを調整します。旧BGA明るさの設定値を引き継ぎます。
+・「背景/Ambient BGAの明るさ(-255 ~ 0)」: 通常の背景BGAと全体／Spread Ambientの明るさを調整します。
+  どちらも既定0（元の明るさ）、-255で黒。前面を暗くしても背景は透けません。
+  BGAサイズが「背景(1920x1080)」の場合は背景側の設定を使います。
 
 --- 以下、readme.txt 原文 ---
 
