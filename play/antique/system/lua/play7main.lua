@@ -11,6 +11,23 @@ local header = {
 	close = 1000,
 	fadeout = 1000,
 	property = {
+		{name = "Ambientモード (BMZ)", category = "ambient", item = {
+			{name = "OFF", op = 918},
+			{name = "ON", op = 919}
+		}, def = "OFF"},
+		{name = "Ambientパネル透明度", category = "ambientAlpha", item = {
+			{name = "0% (不透明)", op = 2000},
+			{name = "10%", op = 2001},
+			{name = "20%", op = 2002},
+			{name = "30%", op = 2003},
+			{name = "40%", op = 2004},
+			{name = "50%", op = 2005},
+			{name = "60%", op = 2006},
+			{name = "70%", op = 2007},
+			{name = "80%", op = 2008},
+			{name = "90%", op = 2009},
+			{name = "100% (透明)", op = 2010}
+		}, def = "40%"},
 		{name = "スクラッチ", category = "op1", item = {
 			{name = "左", op = 902},
 			{name = "右", op = 903}
@@ -130,6 +147,8 @@ local header = {
 	},
 	category = {
 		{name = "オプション", item = {
+			"ambient",
+			"ambientAlpha",
 			"op14",
 			"op4",
 			"op16",
@@ -221,6 +240,9 @@ local function main()
 	local function isSixtarNotes_Type2() return skin_config.option["ノーツタイプ"] == 993 end
 	
 	local function EnableVoice() return skin_config.option["コンボボイス"] == 1001 end
+	local ambient = skin_config.option["Ambientモード (BMZ)"] == 919
+	local panelOpacity = 1 - math.max(0, math.min(10,
+		(skin_config.option["Ambientパネル透明度"] or 2004) - 2000)) / 10
 	
 	local value_offset = {}
 	value_offset.lane = {
@@ -697,6 +719,17 @@ local function main()
 		}
 		
 		append_all(skin.destination, parts.bg.destination)
+		if ambient then
+			-- BMZ composites the current BGA layers before blurring; the foreground stays sharp.
+			append_all(skin.destination, {
+				{id = "bga", op = {171,980}, bmzAmbient = true, stretch = 3,
+					dst = {{x = 0, y = 0, w = 1920, h = 1080, a = 210}}},
+				{id = "img_bga_bgi", op = {170,980}, timer = 41, bmzAmbient = true, stretch = 3,
+					dst = {{x = 0, y = 0, w = 1920, h = 1080, a = 210}}},
+				{id = "img_bga_bgi", op = {981}, timer = 41, bmzAmbient = true, stretch = 3,
+					dst = {{x = 0, y = 0, w = 1920, h = 1080, a = 210}}}
+			})
+		end
 		--
 		
 		
@@ -1638,6 +1671,41 @@ local function main()
 		--
 	end
 	
+	if ambient then
+		-- The background-size preset uses Ambient itself as the full-screen BGA.
+		if BGA_BG() then
+			for i = #skin.destination, 1, -1 do
+				local destination = skin.destination[i]
+				if not destination.bmzAmbient and (destination.id == "bga" or destination.id == "img_bga_bgi") then
+					table.remove(skin.destination, i)
+				end
+			end
+		end
+		-- Copy frames before changing alpha: geometry tables are shared with other parts.
+		local panels = {
+			img_graph_bg = true,
+			img_frame_graph1p = true, img_frame_graph2p = true,
+			img_frame_off_graph1p = true, img_frame_off_graph2p = true,
+			img_frame_play1p = true, img_frame_play2p = true,
+			img_frame_off_play1p = true, img_frame_off_play2p = true,
+			img_frame_lane1p = true, img_frame_lane2p = true, img_frame_laneSixtar = true,
+			img_frame_bga = true, img_frame_bga_load = true, img_frame_bga_play = true
+		}
+		for _, destination in ipairs(skin.destination) do
+			if panels[destination.id] or (destination.id == -110 and destination.dst[1] == geo.lane) then
+				local frames = {}
+				for i, frame in ipairs(destination.dst) do
+					local copy = {}
+					for key, value in pairs(frame) do copy[key] = value end
+					if i == 1 or copy.a ~= nil then
+						copy.a = math.floor((copy.a or 255) * panelOpacity + 0.5)
+					end
+					frames[i] = copy
+				end
+				destination.dst = frames
+			end
+		end
+	end
 	return skin
 	
 end
