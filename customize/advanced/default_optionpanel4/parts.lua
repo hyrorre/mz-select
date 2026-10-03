@@ -308,6 +308,12 @@ local function load()
 		end}
 	}
 	
+	-- load.lua removes this artwork only when the replacement part loaded.
+	for _, destination in ipairs(parts.destination) do
+		if destination.timer == 22 or destination.timer == 32 then
+			destination.bmzLegacyAssist = true
+		end
+	end
 	return parts	
 end
 

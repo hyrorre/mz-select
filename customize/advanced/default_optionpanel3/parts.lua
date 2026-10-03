@@ -198,6 +198,12 @@ local function load()
 		{id = "default_optionpanel_judgetiming",	loop = 300,	op = {23}, timer = 23,	dst = {{time = 300, x = 786, y = 242, w = 20, h = 21, a = 0},{time = 300, a = 255}}},
 	}
 	
+	-- load.lua removes this artwork only when the replacement part loaded.
+	for _, destination in ipairs(parts.destination) do
+		if destination.timer == 22 or destination.timer == 32 then
+			destination.bmzLegacyAssist = true
+		end
+	end
 	return parts	
 end
 
