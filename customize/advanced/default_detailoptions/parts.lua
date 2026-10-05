@@ -126,16 +126,6 @@ local function load()
 		draw("black", x + 27, 283, 204, 31, {row + 5}, slot)
 		draw("value_selected", x + 11, 274, 236, 50, {row + 5}, slot, nil, 210, 2)
 		draw(id .. "_number", x + width / 2, 288, 206, 24, {row + 5}, slot)
-		for direction = 0, 1 do
-			local name, bx = id .. "_number_" .. direction, x + 11 + direction * 124
-			hit(name .. "_hit", 19320 + slot * 2 + direction)
-			table.insert(parts.text, {id = prefix .. name, font = prefix .. "font",
-				constantText = direction == 0 and "−" or "+", size = 26, align = 1})
-			draw("button", bx, 336, 112, 50, {row + 5}, slot)
-			draw("black", bx + 8, 345, 96, 31, {row + 5}, slot)
-			draw(name, bx + 56, 346, 90, 30, {row + 5}, slot)
-			draw(name .. "_hit", bx, 336, 112, 50, {row + 6 + direction}, slot)
-		end
 	end
 
 	-- Only the information in the requested crop: category, value, description,
