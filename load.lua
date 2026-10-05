@@ -116,6 +116,7 @@ function load_parts()
 				if parts_status and parts then
 					if parts.bmzDetailOptions == 1 then
 						skin.bmzDetailOptions = 1
+						skin.bmzDetailOptionsNumbers = parts.bmzDetailOptionsNumbers == true
 						skin.bmzDetailOptionsClose = parts.bmzDetailOptionsClose == true
 					end
 					append_all(skin.property, parts.property)
