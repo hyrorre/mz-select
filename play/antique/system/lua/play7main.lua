@@ -118,7 +118,22 @@ local header = {
 		{name = "RANDOM配置表示", category = "op16", item = {
 			{name = "OFF", op = 916},
 			{name = "ON", op = 917}
-		}, def = "OFF"}
+		}, def = "OFF"},
+		{name = "BPM変化予告 (BMZ)", category = "bpmPreview", item = {
+			{name = "OFF", op = 2120},
+			{name = "TYPE A (判定文字の上)", op = 2121},
+			{name = "TYPE B (判定文字の下)", op = 2122},
+			{name = "TYPE C (レーン外・判定文字の横)", op = 2123},
+			{name = "TYPE D (レーン外・判定線の横)", op = 2124}
+		}, def = "OFF"},
+		{name = "BPM変化予告タイミング", category = "bpmPreviewLead", item = {
+			{name = "500ms", op = 2130},
+			{name = "1000ms", op = 2131},
+			{name = "1500ms", op = 2132},
+			{name = "2000ms", op = 2133},
+			{name = "3000ms", op = 2134},
+			{name = "4000ms", op = 2135}
+		}, def = "2000ms"}
 	},
 	filepath = {
 		{name = "ノーツ",				category = "file1", path = "../customize/notes/*.png",		def = "default"},
@@ -168,6 +183,8 @@ local header = {
 			"op14",
 			"op4",
 			"op16",
+			"bpmPreview",
+			"bpmPreviewLead",
 			"op1",
 			"op10",
 			"offset10",
@@ -263,6 +280,11 @@ local function main()
 	local blurPercent = math.max(0, math.min(100, ((skin_config.option["Ambientぼかし度 (%)"] or 2085) - 2080) * 10))
 	local panelOpacity = 1 - math.max(0, math.min(10,
 		(skin_config.option["Ambientパネル透明度"] or 2004) - 2000)) / 10
+	-- BMZ: 2120=OFF, 2121..2124=TYPE A..D
+	local bpmPreviewType = (skin_config.option["BPM変化予告 (BMZ)"] or 2120) - 2120
+	if bpmPreviewType < 0 or bpmPreviewType > 4 then bpmPreviewType = 0 end
+	local bpmPreviewLeadMs = ({[2130] = 500, [2131] = 1000, [2132] = 1500, [2133] = 2000, [2134] = 3000, [2135] = 4000})[
+		skin_config.option["BPM変化予告タイミング"] or 2133] or 2000
 	
 	local value_offset = {}
 	value_offset.lane = {
@@ -1523,6 +1545,84 @@ local function main()
 		append_all(skin.hiddenCover, parts.play.hiddenCover)
 		append_all(skin.liftCover, parts.play.liftCover)
 		append_all(skin.destination, parts.play.destination)
+
+		-- BMZ BPM変化予告: "153 >> 156" (速くなる=青 / 遅くなる=赤)
+		if bpmPreviewType > 0 then
+			skin.bmzBpmChangePreview = {leadMs = bpmPreviewLeadMs}
+			local text_style = {font = "font1", size = 28, outlineColor = "000000ff", outlineWidth = 2}
+			local function preview_text(id, align, fields)
+				local text = {id = id, align = align}
+				for k, v in pairs(text_style) do text[k] = v end
+				for k, v in pairs(fields) do text[k] = v end
+				return text
+			end
+			append_all(skin.text, {
+				preview_text("txt_bpm_preview_from", 2, {numberRef = 19062}),
+				preview_text("txt_bpm_preview_arrow", 1, {constantText = ">>"}),
+				preview_text("txt_bpm_preview_to", 0, {numberRef = 19061})
+			})
+
+			local w, h, gap = 240, 30, 22
+			local lane_center = geo.lane.x + geo.lane.w / 2
+			local x, y, offsets
+			if bpmPreviewType == 1 then
+				-- TYPE A: FAST/SLOWよりさらに上
+				x, y = lane_center - w / 2, geo.judgedetail.y + geo.judgedetail.h + 10
+				offsets = {3, 32}
+			elseif bpmPreviewType == 2 then
+				-- TYPE B: 判定文字の下
+				x, y = lane_center - w / 2, geo.img_judge.y - h - 10
+				offsets = {3, 32}
+			else
+				-- TYPE C/D: レーンが左寄りなら右側、右寄りなら左側
+				if lane_center < 960 then
+					x = geo.play.x + geo.play.w + 16
+				else
+					x = geo.play.x - w - 16
+				end
+				if bpmPreviewType == 3 then
+					y = geo.img_judge.y + (geo.img_judge.h - h) / 2
+					offsets = {3, 32}
+				else
+					y = geo.judgeline.y + (geo.judgeline.h - h) / 2
+					offsets = {3}
+				end
+			end
+			-- textのxはalignの基準点 (左揃え=左端, 中央=中心, 右揃え=右端)
+			local mid = x + w / 2
+			local boxes = {
+				{id = "txt_bpm_preview_from", x = mid - gap, w = w / 2 - gap},
+				{id = "txt_bpm_preview_arrow", x = mid, w = gap * 2},
+				{id = "txt_bpm_preview_to", x = mid + gap, w = w / 2 - gap}
+			}
+			local colors = {
+				{op = 19065, r = 80, g = 170, b = 255},
+				{op = 19066, r = 255, g = 80, b = 80}
+			}
+			if bpmPreviewType >= 3 then
+				-- レーン外はグラフ等に重なるため下地を敷く
+				skin.panel = skin.panel or {}
+				table.insert(skin.panel, {id = "pnl_bpm_preview", color = "000000e0"})
+				table.insert(skin.destination, {
+					id = "pnl_bpm_preview", timer = 19068, loop = 120, offsets = offsets, op = {19064},
+					dst = {
+						{time = 0, x = x, y = y - 4, w = w, h = h + 8, a = 0},
+						{time = 120, a = 255}
+					}
+				})
+			end
+			for _, color in ipairs(colors) do
+				for _, box in ipairs(boxes) do
+					table.insert(skin.destination, {
+						id = box.id, timer = 19068, loop = 120, offsets = offsets, op = {19064, color.op},
+						dst = {
+							{time = 0, x = box.x, y = y, w = box.w, h = h, r = color.r, g = color.g, b = color.b, a = 0},
+							{time = 120, a = 255}
+						}
+					})
+				end
+			end
+		end
 		--
 		
 		
