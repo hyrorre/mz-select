@@ -1546,79 +1546,108 @@ local function main()
 		append_all(skin.liftCover, parts.play.liftCover)
 		append_all(skin.destination, parts.play.destination)
 
-		-- BMZ BPM変化予告: "153 >> 156" (速くなる=青 / 遅くなる=赤)
+		-- BMZ BPM変化予告: "153 » 156" (速くなる=青 / 遅くなる=赤)
+		-- 数字はFAST/SLOW数と同じ画像フォント (number_common_s) を2倍で表示する
 		if bpmPreviewType > 0 then
 			skin.bmzBpmChangePreview = {leadMs = bpmPreviewLeadMs}
-			local text_style = {font = "font1", size = 28, outlineColor = "000000ff", outlineWidth = 2}
-			local function preview_text(id, align, fields)
-				local text = {id = id, align = align}
-				for k, v in pairs(text_style) do text[k] = v end
-				for k, v in pairs(fields) do text[k] = v end
-				return text
-			end
-			append_all(skin.text, {
-				preview_text("txt_bpm_preview_from", 2, {numberRef = 19062}),
-				preview_text("txt_bpm_preview_arrow", 1, {constantText = ">>"}),
-				preview_text("txt_bpm_preview_to", 0, {numberRef = 19061})
-			})
-
-			local w, h, gap = 240, 30, 22
+			local dw, h, gap, arrow_w, digits = 26, 26, 6, 22, 4
 			local lane_center = geo.lane.x + geo.lane.w / 2
-			local x, y, offsets
+			local y, offsets
 			if bpmPreviewType == 1 then
 				-- TYPE A: FAST/SLOWよりさらに上
-				x, y = lane_center - w / 2, geo.judgedetail.y + geo.judgedetail.h + 10
-				offsets = {3, 32}
+				y, offsets = geo.judgedetail.y + geo.judgedetail.h + 10, {3, 32}
 			elseif bpmPreviewType == 2 then
 				-- TYPE B: 判定文字の下
-				x, y = lane_center - w / 2, geo.img_judge.y - h - 10
-				offsets = {3, 32}
+				y, offsets = geo.img_judge.y - h - 10, {3, 32}
+			elseif bpmPreviewType == 3 then
+				-- TYPE C: レーン外・判定文字の横
+				y, offsets = geo.img_judge.y + (geo.img_judge.h - h) / 2, {3, 32}
 			else
-				-- TYPE C/D: レーンが左寄りなら右側、右寄りなら左側
-				if lane_center < 960 then
-					x = geo.play.x + geo.play.w + 16
-				else
-					x = geo.play.x - w - 16
+				-- TYPE D: レーン外・判定線の横
+				y, offsets = geo.judgeline.y + (geo.judgeline.h - h) / 2, {3}
+			end
+			-- center: レーン内中央 / right: レーンの右側 / left: レーンの左側
+			local layout = "center"
+			if bpmPreviewType >= 3 then
+				layout = lane_center < 960 and "right" or "left"
+			end
+			-- valueのalign: 0=右詰め, 1=左詰め。レーン側の数字をレーンへ寄せる
+			local from_align = layout == "right" and 1 or 0
+			local to_align = layout == "left" and 0 or 1
+			local colors = {
+				{key = "inc", op = 19065, src_y = 26, r = 204, g = 204, b = 255},
+				{key = "dec", op = 19066, src_y = 39, r = 255, g = 204, b = 204}
+			}
+			for _, color in ipairs(colors) do
+				table.insert(skin.value, {id = "num_bpm_preview_from_" .. color.key, src = "src_number_common_s",
+					x = 0, y = color.src_y, w = 130, h = 13, divx = 10, digit = digits, align = from_align, ref = 19062})
+				table.insert(skin.value, {id = "num_bpm_preview_to_" .. color.key, src = "src_number_common_s",
+					x = 0, y = color.src_y, w = 130, h = 13, divx = 10, digit = digits, align = to_align, ref = 19061})
+			end
+			table.insert(skin.text, {id = "txt_bpm_preview_arrow", font = "font1", size = h + 8, align = 1, constantText = "»"})
+
+			-- レーン側の数字の桁数 (1～4桁) で「»」と反対側の数字の位置を変える
+			local digit_lower = {[1] = nil, [2] = 10, [3] = 100, [4] = 1000}
+			local digit_upper = {[1] = 10, [2] = 100, [3] = 1000, [4] = nil}
+			local function digits_draw(ref, count)
+				local terms = {}
+				if digit_lower[count] then table.insert(terms, "number(" .. ref .. ") >= " .. digit_lower[count]) end
+				if digit_upper[count] then table.insert(terms, "number(" .. ref .. ") < " .. digit_upper[count]) end
+				return table.concat(terms, " && ")
+			end
+			-- 数字のxは4桁分の枠の左端、「»」のxは中心
+			local items = {}
+			local box_w = dw * digits
+			if layout == "center" then
+				local mid = lane_center
+				items = {
+					{part = "from", x = mid - arrow_w / 2 - gap - box_w},
+					{part = "arrow", x = mid},
+					{part = "to", x = mid + arrow_w / 2 + gap}
+				}
+			elseif layout == "right" then
+				local left = geo.play.x + geo.play.w + 8
+				table.insert(items, {part = "from", x = left})
+				for count = 1, digits do
+					local draw = digits_draw(19062, count)
+					table.insert(items, {part = "arrow", x = left + count * dw + gap + arrow_w / 2, draw = draw})
+					table.insert(items, {part = "to", x = left + count * dw + gap * 2 + arrow_w, draw = draw})
 				end
-				if bpmPreviewType == 3 then
-					y = geo.img_judge.y + (geo.img_judge.h - h) / 2
-					offsets = {3, 32}
-				else
-					y = geo.judgeline.y + (geo.judgeline.h - h) / 2
-					offsets = {3}
+			else
+				local right = geo.play.x - 8
+				table.insert(items, {part = "to", x = right - box_w})
+				for count = 1, digits do
+					local draw = digits_draw(19061, count)
+					table.insert(items, {part = "arrow", x = right - count * dw - gap - arrow_w / 2, draw = draw})
+					table.insert(items, {part = "from", x = right - count * dw - gap * 2 - arrow_w - box_w, draw = draw})
 				end
 			end
-			-- textのxはalignの基準点 (左揃え=左端, 中央=中心, 右揃え=右端)
-			local mid = x + w / 2
-			local boxes = {
-				{id = "txt_bpm_preview_from", x = mid - gap, w = w / 2 - gap},
-				{id = "txt_bpm_preview_arrow", x = mid, w = gap * 2},
-				{id = "txt_bpm_preview_to", x = mid + gap, w = w / 2 - gap}
-			}
-			local colors = {
-				{op = 19065, r = 80, g = 170, b = 255},
-				{op = 19066, r = 255, g = 80, b = 80}
-			}
-			if bpmPreviewType >= 3 then
+			if layout ~= "center" then
 				-- レーン外はグラフ等に重なるため下地を敷く
+				local panel_w = box_w * 2 + gap * 2 + arrow_w + 12
+				local panel_x = layout == "right" and geo.play.x + geo.play.w + 2 or geo.play.x - 2 - panel_w
 				skin.panel = skin.panel or {}
 				table.insert(skin.panel, {id = "pnl_bpm_preview", color = "000000e0"})
 				table.insert(skin.destination, {
 					id = "pnl_bpm_preview", timer = 19068, loop = 120, offsets = offsets, op = {19064},
 					dst = {
-						{time = 0, x = x, y = y - 4, w = w, h = h + 8, a = 0},
+						{time = 0, x = panel_x, y = y - 4, w = panel_w, h = h + 8, a = 0},
 						{time = 120, a = 255}
 					}
 				})
 			end
 			for _, color in ipairs(colors) do
-				for _, box in ipairs(boxes) do
+				for _, item in ipairs(items) do
+					local frame = {time = 0, x = item.x, y = y, w = dw, h = h, a = 0}
+					local id = "num_bpm_preview_" .. item.part .. "_" .. color.key
+					if item.part == "arrow" then
+						id = "txt_bpm_preview_arrow"
+						frame.y, frame.w, frame.h = y - 4, arrow_w, h + 8
+						frame.r, frame.g, frame.b = color.r, color.g, color.b
+					end
 					table.insert(skin.destination, {
-						id = box.id, timer = 19068, loop = 120, offsets = offsets, op = {19064, color.op},
-						dst = {
-							{time = 0, x = box.x, y = y, w = box.w, h = h, r = color.r, g = color.g, b = color.b, a = 0},
-							{time = 120, a = 255}
-						}
+						id = id, timer = 19068, loop = 120, offsets = offsets, op = {19064, color.op}, draw = item.draw,
+						dst = {frame, {time = 120, a = 255}}
 					})
 				end
 			end
