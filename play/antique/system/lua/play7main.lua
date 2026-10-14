@@ -162,6 +162,7 @@ local header = {
 		{name = "キービームの長さ",				category = "offset4", id = 53, h = true},
 		{name = "前面BGAの明るさ(-255 ~ 0)",	category = "offset5", id = 54, a = true},
 		{name = "背景/Ambient BGAの明るさ(-255 ~ 0)", category = "offset14", id = 65, a = true},
+		{name = "BPM変化予告の表示位置", category = "offset15", id = 66, x = true, y = true, w = true, h = true, a = true},
 		{name = "小節線の明るさ(-255 ~ 0)",		category = "offset6", id = 55, a = true},
 		{name = "判定文字の表示位置",			category = "offset7", id = 56, x = true, y = true},
 		{name = "ゴーストの表示位置",			category = "offset8", id = 57, x = true, y = true},
@@ -185,6 +186,7 @@ local header = {
 			"op16",
 			"bpmPreview",
 			"bpmPreviewLead",
+			"offset15",
 			"op1",
 			"op10",
 			"offset10",
@@ -1550,24 +1552,35 @@ local function main()
 		-- 数字はFAST/SLOW数と同じ画像フォント (number_common_s) を等倍・最大3桁で表示する
 		if bpmPreviewType > 0 then
 			skin.bmzBpmChangePreview = {leadMs = bpmPreviewLeadMs}
-			local dw, h, gap, digits = 13, 13, 3, 3
+			-- 「BPM変化予告の表示位置」: x/yで位置、w/hで数字1桁の幅・高さ、aで透明度を調整する。
+			-- 「»」と間隔は数字と同じ比率で大きさを変える
+			local preview_offset = skin_config.offset["BPM変化予告の表示位置"] or {}
+			local ox, oy = preview_offset.x or 0, preview_offset.y or 0
+			local dw = math.max(1, 13 + (preview_offset.w or 0))
+			local h = math.max(1, 13 + (preview_offset.h or 0))
+			local alpha = math.max(0, math.min(255, 255 + (preview_offset.a or 0)))
+			local scale_x, scale_y = dw / 13, h / 13
+			local function round(value) return math.floor(value + 0.5) end
+			local gap, digits = math.max(0, round(3 * scale_x)), 3
 			-- 「»」は数字と同程度の高さ・太さに見えるようフォントを大きめにする
-			local arrow_w, arrow_size, arrow_dy = 20, 32, 2
+			local arrow_w, arrow_size, arrow_dy = round(20 * scale_x), round(32 * scale_y), round(2 * scale_y)
 			local lane_center = geo.lane.x + geo.lane.w / 2
 			local y, offsets
 			if bpmPreviewType == 1 then
-				-- TYPE A: FAST/SLOWよりさらに上
-				y, offsets = geo.judgedetail.y + geo.judgedetail.h + 10, {3, 32}
+				-- TYPE A: FAST/SLOWよりさらに上。FAST/SLOWと同じオフセットに追従する
+				y, offsets = geo.judgedetail.y + geo.judgedetail.h + 10, {3, 32, 33}
 			elseif bpmPreviewType == 2 then
 				-- TYPE B: 判定文字の下
 				y, offsets = geo.img_judge.y - h - 10, {3, 32}
 			elseif bpmPreviewType == 3 then
 				-- TYPE C: レーン外・判定文字の横
-				y, offsets = geo.img_judge.y + (geo.img_judge.h - h) / 2, {3, 32}
+				y, offsets = round(geo.img_judge.y + (geo.img_judge.h - h) / 2), {3, 32}
 			else
 				-- TYPE D: レーン外・判定線の横
-				y, offsets = geo.judgeline.y + (geo.judgeline.h - h) / 2, {3}
+				y, offsets = round(geo.judgeline.y + (geo.judgeline.h - h) / 2), {3}
 			end
+			-- 利用者の位置調整は自動配置の後に加える
+			y = y + oy
 			-- center: レーン内中央 / right: レーンの右側 / left: レーンの左側
 			local layout = "center"
 			if bpmPreviewType >= 3 then
@@ -1603,14 +1616,14 @@ local function main()
 			local items = {}
 			local box_w = dw * digits
 			if layout == "center" then
-				local mid = lane_center
+				local mid = lane_center + ox
 				items = {
 					{part = "from", x = mid - arrow_w / 2 - gap - box_w},
 					{part = "arrow", x = mid},
 					{part = "to", x = mid + arrow_w / 2 + gap}
 				}
 			elseif layout == "right" then
-				local left = geo.play.x + geo.play.w + 8
+				local left = geo.play.x + geo.play.w + 8 + ox
 				table.insert(items, {part = "from", x = left})
 				for count = 1, digits do
 					local draw = digits_draw(19062, count)
@@ -1618,7 +1631,7 @@ local function main()
 					table.insert(items, {part = "to", x = left + count * dw + gap * 2 + arrow_w, draw = draw})
 				end
 			else
-				local right = geo.play.x - 8
+				local right = geo.play.x - 8 + ox
 				table.insert(items, {part = "to", x = right - box_w})
 				for count = 1, digits do
 					local draw = digits_draw(19061, count)
@@ -1638,7 +1651,7 @@ local function main()
 					end
 					table.insert(skin.destination, {
 						id = id, timer = 19068, loop = 120, offsets = offsets, op = {19064, color.op}, draw = item.draw,
-						dst = {frame, {time = 120, a = 255}}
+						dst = {frame, {time = 120, a = alpha}}
 					})
 				end
 			end
