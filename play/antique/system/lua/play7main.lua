@@ -1547,10 +1547,12 @@ local function main()
 		append_all(skin.destination, parts.play.destination)
 
 		-- BMZ BPM変化予告: "153 » 156" (速くなる=青 / 遅くなる=赤)
-		-- 数字はFAST/SLOW数と同じ画像フォント (number_common_s) を2倍で表示する
+		-- 数字はFAST/SLOW数と同じ画像フォント (number_common_s) を等倍・最大3桁で表示する
 		if bpmPreviewType > 0 then
 			skin.bmzBpmChangePreview = {leadMs = bpmPreviewLeadMs}
-			local dw, h, gap, arrow_w, digits = 26, 26, 6, 22, 4
+			local dw, h, gap, digits = 13, 13, 3, 3
+			-- 「»」は数字と同程度の高さ・太さに見えるようフォントを大きめにする
+			local arrow_w, arrow_size = 20, 32
 			local lane_center = geo.lane.x + geo.lane.w / 2
 			local y, offsets
 			if bpmPreviewType == 1 then
@@ -1575,27 +1577,29 @@ local function main()
 			local from_align = layout == "right" and 1 or 0
 			local to_align = layout == "left" and 0 or 1
 			local colors = {
-				{key = "inc", op = 19065, src_y = 26, r = 204, g = 204, b = 255},
-				{key = "dec", op = 19066, src_y = 39, r = 255, g = 204, b = 204}
+				{key = "inc", op = 19065, src_y = 26, r = 204, g = 204, b = 255, outline = "ccccffff"},
+				{key = "dec", op = 19066, src_y = 39, r = 255, g = 204, b = 204, outline = "ffccccff"}
 			}
 			for _, color in ipairs(colors) do
 				table.insert(skin.value, {id = "num_bpm_preview_from_" .. color.key, src = "src_number_common_s",
 					x = 0, y = color.src_y, w = 130, h = 13, divx = 10, digit = digits, align = from_align, ref = 19062})
 				table.insert(skin.value, {id = "num_bpm_preview_to_" .. color.key, src = "src_number_common_s",
 					x = 0, y = color.src_y, w = 130, h = 13, divx = 10, digit = digits, align = to_align, ref = 19061})
+				-- 縁取りで線を太くし、数字の太さに近づける
+				table.insert(skin.text, {id = "txt_bpm_preview_arrow_" .. color.key, font = "font1", size = arrow_size,
+					align = 1, constantText = "»", outlineColor = color.outline, outlineWidth = 0.5})
 			end
-			table.insert(skin.text, {id = "txt_bpm_preview_arrow", font = "font1", size = h + 8, align = 1, constantText = "»"})
 
-			-- レーン側の数字の桁数 (1～4桁) で「»」と反対側の数字の位置を変える
-			local digit_lower = {[1] = nil, [2] = 10, [3] = 100, [4] = 1000}
-			local digit_upper = {[1] = 10, [2] = 100, [3] = 1000, [4] = nil}
+			-- レーン側の数字の桁数 (1～3桁) で「»」と反対側の数字の位置を変える
+			local digit_lower = {[2] = 10, [3] = 100}
+			local digit_upper = {[1] = 10, [2] = 100}
 			local function digits_draw(ref, count)
 				local terms = {}
 				if digit_lower[count] then table.insert(terms, "number(" .. ref .. ") >= " .. digit_lower[count]) end
 				if digit_upper[count] then table.insert(terms, "number(" .. ref .. ") < " .. digit_upper[count]) end
 				return table.concat(terms, " && ")
 			end
-			-- 数字のxは4桁分の枠の左端、「»」のxは中心
+			-- 数字のxは3桁分の枠の左端、「»」のxは中心
 			local items = {}
 			local box_w = dw * digits
 			if layout == "center" then
@@ -1624,7 +1628,7 @@ local function main()
 			end
 			if layout ~= "center" then
 				-- レーン外はグラフ等に重なるため下地を敷く
-				local panel_w = box_w * 2 + gap * 2 + arrow_w + 12
+				local panel_w = box_w * 2 + gap * 2 + arrow_w + 8
 				local panel_x = layout == "right" and geo.play.x + geo.play.w + 2 or geo.play.x - 2 - panel_w
 				skin.panel = skin.panel or {}
 				table.insert(skin.panel, {id = "pnl_bpm_preview", color = "000000e0"})
@@ -1641,8 +1645,8 @@ local function main()
 					local frame = {time = 0, x = item.x, y = y, w = dw, h = h, a = 0}
 					local id = "num_bpm_preview_" .. item.part .. "_" .. color.key
 					if item.part == "arrow" then
-						id = "txt_bpm_preview_arrow"
-						frame.y, frame.w, frame.h = y - 4, arrow_w, h + 8
+						id = "txt_bpm_preview_arrow_" .. color.key
+						frame.y, frame.w, frame.h = y - (arrow_size - h) / 2, arrow_w, arrow_size
 						frame.r, frame.g, frame.b = color.r, color.g, color.b
 					end
 					table.insert(skin.destination, {
