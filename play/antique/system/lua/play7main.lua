@@ -1561,7 +1561,8 @@ local function main()
 			local alpha = math.max(0, math.min(255, 255 + (preview_offset.a or 0)))
 			local scale_x, scale_y = dw / 13, h / 13
 			local function round(value) return math.floor(value + 0.5) end
-			local gap, digits = math.max(0, round(3 * scale_x)), 3
+			-- 数字と「»」の間は数字の高さ程度空ける
+			local gap, digits = math.max(0, round(9 * scale_x)), 3
 			-- 「»」は数字と同程度の高さ・太さに見えるようフォントを大きめにする
 			local arrow_w, arrow_size, arrow_dy = round(20 * scale_x), round(32 * scale_y), round(2 * scale_y)
 			local lane_center = geo.lane.x + geo.lane.w / 2
