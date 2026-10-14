@@ -1626,20 +1626,6 @@ local function main()
 					table.insert(items, {part = "from", x = right - count * dw - gap * 2 - arrow_w - box_w, draw = draw})
 				end
 			end
-			if layout ~= "center" then
-				-- レーン外はグラフ等に重なるため下地を敷く
-				local panel_w = box_w * 2 + gap * 2 + arrow_w + 8
-				local panel_x = layout == "right" and geo.play.x + geo.play.w + 2 or geo.play.x - 2 - panel_w
-				skin.panel = skin.panel or {}
-				table.insert(skin.panel, {id = "pnl_bpm_preview", color = "000000e0"})
-				table.insert(skin.destination, {
-					id = "pnl_bpm_preview", timer = 19068, loop = 120, offsets = offsets, op = {19064},
-					dst = {
-						{time = 0, x = panel_x, y = y - 4, w = panel_w, h = h + 8, a = 0},
-						{time = 120, a = 255}
-					}
-				})
-			end
 			for _, color in ipairs(colors) do
 				for _, item in ipairs(items) do
 					local frame = {time = 0, x = item.x, y = y, w = dw, h = h, a = 0}
