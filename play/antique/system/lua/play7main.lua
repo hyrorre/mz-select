@@ -1552,7 +1552,7 @@ local function main()
 			skin.bmzBpmChangePreview = {leadMs = bpmPreviewLeadMs}
 			local dw, h, gap, digits = 13, 13, 3, 3
 			-- 「»」は数字と同程度の高さ・太さに見えるようフォントを大きめにする
-			local arrow_w, arrow_size = 20, 32
+			local arrow_w, arrow_size, arrow_dy = 20, 32, 2
 			local lane_center = geo.lane.x + geo.lane.w / 2
 			local y, offsets
 			if bpmPreviewType == 1 then
@@ -1646,7 +1646,8 @@ local function main()
 					local id = "num_bpm_preview_" .. item.part .. "_" .. color.key
 					if item.part == "arrow" then
 						id = "txt_bpm_preview_arrow_" .. color.key
-						frame.y, frame.w, frame.h = y - (arrow_size - h) / 2, arrow_w, arrow_size
+						-- フォントの「»」は字面が下寄りのため、数字と中心が揃うよう持ち上げる
+						frame.y, frame.w, frame.h = y - math.floor((arrow_size - h) / 2) + arrow_dy, arrow_w, arrow_size
 						frame.r, frame.g, frame.b = color.r, color.g, color.b
 					end
 					table.insert(skin.destination, {
