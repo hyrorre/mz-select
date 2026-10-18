@@ -65,11 +65,14 @@ local function load()
 		end
 	end
 	panel("shade", "000000A8")
-	panel("column", "00000050")
 	panel("black", "000000FF")
 	panel("footer", "00000070")
-	-- Reuse the original artwork without modifying any image files.
-	sprite("button", "panel", 331, 217, 170, 50)
+	-- Reuse the original artwork without modifying any image files. The 170x50
+	-- button and cursor keep their end caps; only a plain column between the caps
+	-- and the baked OFF label stretches, so no baked text is ever drawn.
+	sprite("button_l", "panel", 331, 217, 12, 50)
+	sprite("button_m", "panel", 351, 217, 20, 50)
+	sprite("button_r", "panel", 489, 217, 12, 50)
 	sprite("edge_h", "panel", 326, 153, 179, 1)
 	-- Column colours follow each row's category. Every option card has the same
 	-- 3 px rim and a plain header fill; {source, left, top} of the card used.
@@ -100,7 +103,9 @@ local function load()
 				value = 19401 + slot * 10, images = images})
 		end
 	end
-	sprite("value_selected", "cursor", 616, 500, 170, 50)
+	sprite("value_selected_l", "cursor", 616, 500, 24, 50)
+	sprite("value_selected_m", "cursor", 646, 500, 20, 50)
+	sprite("value_selected_r", "cursor", 762, 500, 24, 50)
 	hit("blocker", 0)
 	-- Input is consumed immediately, including the uncovered area during entry.
 	table.insert(parts.destination, {id = prefix .. "blocker", op = {19300, 22}, dst = {{x = 0, y = 0, w = 1920, h = 1080}}})
@@ -115,45 +120,49 @@ local function load()
 		draw("rim_v_" .. slot, x, 183, 3, 544, {row}, slot, nil, alpha)
 		draw("rim_v_" .. slot, x + width - 3, 183, 3, 544, {row}, slot, nil, alpha)
 	end
+	-- Three-slice a 170x50 part to 236 px: fixed caps, stretched plain middle.
+	local function three(id, cap, x, y, options, slot, blend)
+		draw(id .. "_l", x, y, cap, 50, options, slot, nil, nil, blend)
+		draw(id .. "_m", x + cap, y, 236 - cap * 2, 50, options, slot, nil, nil, blend)
+		draw(id .. "_r", x + 236 - cap, y, cap, 50, options, slot, nil, nil, blend)
+	end
+	-- Card layout of panel2: a 3 px rim, an opaque header-colour fill, the title
+	-- and a subtitle in the header, then 50 px buttons stacked from 65 px down.
+	local first = 245
 	for slot = 0, 8 do
 		local position = slot == 7 and -1 or slot == 8 and 7 or slot
 		local x = left + position * pitch
 		local row = 19400 + slot * 10
 		local id = "row_" .. slot
 		hit(id .. "_hit", 19310 + slot)
-		text(id .. "_label", row, 24, 1)
+		text(id .. "_label", row, 20, 1)
+		text(id .. "_caption", row + 3, 14, 1)
 		text(id .. "_status", row + 2, 18, 1)
 		text(id .. "_external", row + 1, 21, 1)
 		draw(id .. "_hit", x, 180, width, 550, {row}, slot)
-		draw("column", x, 180, width, 550, {row}, slot)
-		-- The header fill at 96 alpha reproduces the former 07373760 selected tint.
-		draw("header_" .. slot, x, 180, width, 550, {row + 1}, slot, nil, 96)
+		draw("header_" .. slot, x + 3, 183, width - 6, 544, {row}, slot)
 		border(x, row, slot, 92)
 		border(x, row + 1, slot, 255)
-		draw("header_" .. slot, x + 4, 184, width - 8, 66, {row}, slot, nil, 170)
-		draw("header_" .. slot, x + 4, 184, width - 8, 66, {row + 1}, slot)
-		draw(id .. "_label", x + width / 2, 200, width - 20, 34, {row}, slot)
+		draw(id .. "_label", x + width / 2, 192, width - 20, 24, {row}, slot)
+		draw(id .. "_caption", x + width / 2, 220, width - 20, 16, {row}, slot)
 		draw(id .. "_status", x + width / 2, 699, width - 20, 22, {row}, slot, {223, 197, 143})
 		draw(id .. "_external", x + width / 2, 652, width - 20, 30, {row, row + 4}, slot, {223, 197, 143})
 		for choice = 0, 7 do
 			local cell = 19500 + slot * 64 + choice * 4
 			local name = id .. "_choice_" .. choice
-			local y = 274 + choice * 52
+			local y = first + choice * 50
 			hit(name .. "_hit", cell)
 			text(name, cell, 21, 1, true)
-			draw("button", x + 11, y, 236, 50, {cell}, slot)
-			-- Hide the baked OFF label inside the unchanged bevel, then draw live text.
-			draw("black", x + 27, y + 9, 204, 31, {cell}, slot)
-			draw("value_selected", x + 11, y, 236, 50, {cell + 1}, slot, nil, 210, 2)
+			three("button", 12, x + 11, y, {cell}, slot)
+			three("value_selected", 24, x + 11, y, {cell + 1}, slot, 2)
 			draw(name, x + width / 2, y + 14, 206, 24, {cell, row + 3}, slot)
 			draw(name, x + width / 2, y + 14, 206, 24, {cell, -(row + 3)}, slot, {176, 176, 176})
 			draw(name .. "_hit", x + 11, y, 236, 50, {cell + 2}, slot)
 		end
 		text(id .. "_number", row + 1, 21, 1, true)
-		draw("button", x + 11, 274, 236, 50, {row + 5}, slot)
-		draw("black", x + 27, 283, 204, 31, {row + 5}, slot)
-		draw("value_selected", x + 11, 274, 236, 50, {row + 5}, slot, nil, 210, 2)
-		draw(id .. "_number", x + width / 2, 288, 206, 24, {row + 5}, slot)
+		three("button", 12, x + 11, first, {row + 5}, slot)
+		three("value_selected", 24, x + 11, first, {row + 5}, slot, 2)
+		draw(id .. "_number", x + width / 2, first + 14, 206, 24, {row + 5}, slot)
 	end
 
 	-- Only the information in the requested crop: category, value, description,
