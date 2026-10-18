@@ -9,6 +9,7 @@ local function load()
 		bmzDetailOptionsClose = true,
 		source = {
 			{id = prefix .. "panel", path = "customize/advanced/default_optionpanel4/panel2.png"},
+			{id = prefix .. "panel3", path = "customize/advanced/default_optionpanel4/panel3.png"},
 			{id = prefix .. "cursor", path = "customize/advanced/default_optionpanel4/cursor.png"},
 		},
 		font = {
@@ -16,7 +17,7 @@ local function load()
 			-- The version/IR bitmap font, with only missing parentheses supplemented.
 			{id = prefix .. "choices", path = "customize/advanced/default_detailoptions/choices.fnt"},
 		},
-		panel = {}, text = {}, image = {}, destination = {},
+		panel = {}, text = {}, image = {}, imageset = {}, destination = {},
 	}
 	local function panel(id, color)
 		table.insert(parts.panel, {id = prefix .. id, color = color})
@@ -65,14 +66,40 @@ local function load()
 	end
 	panel("shade", "000000A8")
 	panel("column", "00000050")
-	panel("selected", "07373760")
 	panel("black", "000000FF")
 	panel("footer", "00000070")
 	-- Reuse the original artwork without modifying any image files.
 	sprite("button", "panel", 331, 217, 170, 50)
-	sprite("header", "panel", 328, 155, 176, 8)
 	sprite("edge_h", "panel", 326, 153, 179, 1)
-	sprite("edge_v", "panel", 325, 155, 3, 162)
+	-- Column colours follow each row's category. Every option card has the same
+	-- 3 px rim and a plain header fill; {source, left, top} of the card used.
+	local cards = {
+		blue = {"panel", 325, 152}, -- REGUL SPEED
+		green = {"panel3", 552, 222}, -- hi-speed
+		orange = {"panel3", 118, 21}, -- gauge auto shift
+		red = {"panel3", 452, 758}, -- display auto adjust
+		pink = {"panel3", 692, 758}, -- judge timing
+	}
+	for name, card in pairs(cards) do
+		sprite("header_" .. name, card[1], card[2] + 3, card[3] + 3, 176, 8)
+		sprite("rim_h_" .. name, card[1], card[2] + 1, card[3] + 1, 179, 1)
+		sprite("rim_v_" .. name, card[1], card[2], card[3] + 3, 3, 40)
+	end
+	-- Index = category_id: 1 LANE / HI-SPEED, 2 GAUGE, 4 LONG NOTE,
+	-- 5 ASSIST / MODIFIER, 6 BGA, 7 JUDGE (0 and the retired 3 stay blue).
+	local category_colors = {"blue", "blue", "green", "blue", "orange", "pink", "red", "blue"}
+	-- An imageset per column picks the colour from that row's category_id, so
+	-- the columns need no extra destinations or draw conditions.
+	for slot = 0, 8 do
+		for _, part in ipairs({"header", "rim_h", "rim_v"}) do
+			local images = {}
+			for _, name in ipairs(category_colors) do
+				table.insert(images, prefix .. part .. "_" .. name)
+			end
+			table.insert(parts.imageset, {id = prefix .. part .. "_" .. slot,
+				value = 19401 + slot * 10, images = images})
+		end
+	end
 	sprite("value_selected", "cursor", 616, 500, 170, 50)
 	hit("blocker", 0)
 	-- Input is consumed immediately, including the uncovered area during entry.
@@ -83,10 +110,10 @@ local function load()
 		dst = {{time = 0, x = 0, y = 0, w = 1920, h = 1080, a = 255}, {time = 300, a = 0}}})
 
 	local function border(x, row, slot, alpha)
-		draw("edge_h", x, 180, width, 3, {row}, slot, nil, alpha)
-		draw("edge_h", x, 727, width, 3, {row}, slot, nil, alpha)
-		draw("edge_v", x, 183, 3, 544, {row}, slot, nil, alpha)
-		draw("edge_v", x + width - 3, 183, 3, 544, {row}, slot, nil, alpha)
+		draw("rim_h_" .. slot, x, 180, width, 3, {row}, slot, nil, alpha)
+		draw("rim_h_" .. slot, x, 727, width, 3, {row}, slot, nil, alpha)
+		draw("rim_v_" .. slot, x, 183, 3, 544, {row}, slot, nil, alpha)
+		draw("rim_v_" .. slot, x + width - 3, 183, 3, 544, {row}, slot, nil, alpha)
 	end
 	for slot = 0, 8 do
 		local position = slot == 7 and -1 or slot == 8 and 7 or slot
@@ -99,11 +126,12 @@ local function load()
 		text(id .. "_external", row + 1, 21, 1)
 		draw(id .. "_hit", x, 180, width, 550, {row}, slot)
 		draw("column", x, 180, width, 550, {row}, slot)
-		draw("selected", x, 180, width, 550, {row + 1}, slot)
+		-- The header fill at 96 alpha reproduces the former 07373760 selected tint.
+		draw("header_" .. slot, x, 180, width, 550, {row + 1}, slot, nil, 96)
 		border(x, row, slot, 92)
 		border(x, row + 1, slot, 255)
-		draw("header", x + 4, 184, width - 8, 66, {row}, slot, nil, 170)
-		draw("header", x + 4, 184, width - 8, 66, {row + 1}, slot)
+		draw("header_" .. slot, x + 4, 184, width - 8, 66, {row}, slot, nil, 170)
+		draw("header_" .. slot, x + 4, 184, width - 8, 66, {row + 1}, slot)
 		draw(id .. "_label", x + width / 2, 200, width - 20, 34, {row}, slot)
 		draw(id .. "_status", x + width / 2, 699, width - 20, 22, {row}, slot, {223, 197, 143})
 		draw(id .. "_external", x + width / 2, 652, width - 20, 30, {row, row + 4}, slot, {223, 197, 143})
