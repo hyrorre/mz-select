@@ -38,11 +38,13 @@ local function load()
 	-- Same 300 ms ease-out as the original Assist panel (timer 22, acc 2).
 	-- A full-canvas carousel needs no opaque side masks: canvas clipping preserves
 	-- the transparent song screen behind it. Overscan starts after the entrance.
-	-- The selected item always occupies the centre slot 3; raise that column so
-	-- it stands out, including its hit areas and the frozen exit.
+	-- The selected item always lands in the centre slot 3. bmzDetailRaise lifts
+	-- whichever column is passing the centre, following the scroll interpolation,
+	-- for drawing, hit areas and the frozen exit alike.
 	local selected_raise = 24
 	local function draw(id, x, y, w, h, options, slot, color, alpha, blend)
-		if slot == 3 then y = y - selected_raise end
+		-- Drawing column: overscan slot 7 sits left of 0 and slot 8 right of 6.
+		local raise = slot and {slot == 7 and -1 or slot == 8 and 7 or slot, selected_raise} or nil
 		local op = {19300, 22}
 		for _, value in ipairs(options or {}) do table.insert(op, value) end
 		local frame = {time = 0, x = x - 1920, y = 1080 - y - h, w = w, h = h, acc = 2, a = alpha or 255}
@@ -54,7 +56,7 @@ local function load()
 		end
 		table.insert(parts.destination, {
 			id = prefix .. id, op = op, timer = 22, loop = 300, dst = frames, blend = blend,
-			bmzDetailScroll = slot and {pitch, 0} or nil,
+			bmzDetailScroll = slot and {pitch, 0} or nil, bmzDetailRaise = raise,
 		})
 		-- The player freezes display data on release; hit areas are never retained.
 		if not id:match("_hit$") and (not slot or slot < 7) then
@@ -65,7 +67,7 @@ local function load()
 			table.insert(parts.destination, {
 				id = prefix .. id, op = close_op, timer = 32, loop = -1, blend = blend,
 				dst = {close_frame, {time = 300, x = x - 1920}},
-				bmzDetailScroll = slot and {pitch, 0} or nil,
+				bmzDetailScroll = slot and {pitch, 0} or nil, bmzDetailRaise = raise,
 			})
 		end
 	end
