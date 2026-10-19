@@ -121,11 +121,13 @@ local function load()
 		draw("rim_v_" .. slot, x, 183, 3, 544, {row}, slot, nil, alpha)
 		draw("rim_v_" .. slot, x + width - 3, 183, 3, 544, {row}, slot, nil, alpha)
 	end
-	-- Three-slice a 170x50 part to 236 px: fixed caps, stretched plain middle.
+	-- Like panel2's cards, buttons sit 6 px inside the frame (3 px rim, 3 px fill).
+	local button_x, button_w = 6, width - 12
+	-- Three-slice a 170x50 part to the button width: fixed caps, stretched plain middle.
 	local function three(id, cap, x, y, options, slot, blend)
 		draw(id .. "_l", x, y, cap, 50, options, slot, nil, nil, blend)
-		draw(id .. "_m", x + cap, y, 236 - cap * 2, 50, options, slot, nil, nil, blend)
-		draw(id .. "_r", x + 236 - cap, y, cap, 50, options, slot, nil, nil, blend)
+		draw(id .. "_m", x + cap, y, button_w - cap * 2, 50, options, slot, nil, nil, blend)
+		draw(id .. "_r", x + button_w - cap, y, cap, 50, options, slot, nil, nil, blend)
 	end
 	-- Card layout of panel2: a 3 px rim, an opaque header-colour fill, the title
 	-- and a subtitle in the header, then 50 px buttons stacked from 65 px down.
@@ -145,8 +147,8 @@ local function load()
 		draw("header_" .. slot, x + 3, 183, width - 6, 544, {row}, slot)
 		border(x, row, slot, 92)
 		border(x, row + 1, slot, 255)
-		draw(id .. "_label", x + width / 2, 192, width - 20, 24, {row}, slot)
-		draw(id .. "_caption", x + width / 2, 220, width - 20, 16, {row}, slot)
+		draw(id .. "_label", x + width / 2, 190, width - 20, 24, {row}, slot)
+		draw(id .. "_caption", x + width / 2, 216, width - 20, 16, {row}, slot)
 		draw(id .. "_status", x + width / 2, 699, width - 20, 22, {row}, slot, {223, 197, 143})
 		draw(id .. "_external", x + width / 2, 652, width - 20, 30, {row, row + 4}, slot, {223, 197, 143})
 		for choice = 0, 7 do
@@ -155,16 +157,16 @@ local function load()
 			local y = first + choice * 50
 			hit(name .. "_hit", cell)
 			text(name, cell, 21, 1, true)
-			three("button", 12, x + 11, y, {cell}, slot)
-			three("value_selected", 24, x + 11, y, {cell + 1}, slot, 2)
-			draw(name, x + width / 2, y + 14, 206, 24, {cell, row + 3}, slot)
-			draw(name, x + width / 2, y + 14, 206, 24, {cell, -(row + 3)}, slot, {176, 176, 176})
-			draw(name .. "_hit", x + 11, y, 236, 50, {cell + 2}, slot)
+			three("button", 12, x + button_x, y, {cell}, slot)
+			three("value_selected", 24, x + button_x, y, {cell + 1}, slot, 2)
+			draw(name, x + width / 2, y + 14, 220, 24, {cell, row + 3}, slot)
+			draw(name, x + width / 2, y + 14, 220, 24, {cell, -(row + 3)}, slot, {176, 176, 176})
+			draw(name .. "_hit", x + button_x, y, button_w, 50, {cell + 2}, slot)
 		end
 		text(id .. "_number", row + 1, 21, 1, true)
 		-- A number has no choice to highlight: draw it in an unselected button.
-		three("button", 12, x + 11, first, {row + 5}, slot)
-		draw(id .. "_number", x + width / 2, first + 14, 206, 24, {row + 5}, slot)
+		three("button", 12, x + button_x, first, {row + 5}, slot)
+		draw(id .. "_number", x + width / 2, first + 14, 220, 24, {row + 5}, slot)
 	end
 
 	-- Only the information in the requested crop: category, value, description,
