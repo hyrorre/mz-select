@@ -38,7 +38,11 @@ local function load()
 	-- Same 300 ms ease-out as the original Assist panel (timer 22, acc 2).
 	-- A full-canvas carousel needs no opaque side masks: canvas clipping preserves
 	-- the transparent song screen behind it. Overscan starts after the entrance.
+	-- The selected item always occupies the centre slot 3; raise that column so
+	-- it stands out, including its hit areas and the frozen exit.
+	local selected_raise = 24
 	local function draw(id, x, y, w, h, options, slot, color, alpha, blend)
+		if slot == 3 then y = y - selected_raise end
 		local op = {19300, 22}
 		for _, value in ipairs(options or {}) do table.insert(op, value) end
 		local frame = {time = 0, x = x - 1920, y = 1080 - y - h, w = w, h = h, acc = 2, a = alpha or 255}
