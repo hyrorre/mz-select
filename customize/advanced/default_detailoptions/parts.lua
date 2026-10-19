@@ -25,10 +25,11 @@ local function load()
 	local function sprite(id, source, x, y, w, h)
 		table.insert(parts.image, {id = prefix .. id, src = prefix .. source, x = x, y = y, w = w, h = h})
 	end
-	local function text(id, ref, size, align, choice)
+	local function text(id, ref, size, align, choice, outline)
 		table.insert(parts.text, {
 			id = prefix .. id, font = prefix .. (choice and "choices" or "font"), ref = ref,
 			size = size, align = align or 0, overflow = 1,
+			outlineColor = outline and "000000FF" or nil, outlineWidth = outline,
 		})
 	end
 	local function hit(id, event)
@@ -135,7 +136,8 @@ local function load()
 		local row = 19400 + slot * 10
 		local id = "row_" .. slot
 		hit(id .. "_hit", 19310 + slot)
-		text(id .. "_label", row, 20, 1)
+		-- Black-edged like the titles printed on the normal cards.
+		text(id .. "_label", row, 20, 1, false, 2)
 		text(id .. "_caption", row + 3, 14, 1)
 		text(id .. "_status", row + 2, 18, 1)
 		text(id .. "_external", row + 1, 21, 1)
@@ -160,8 +162,8 @@ local function load()
 			draw(name .. "_hit", x + 11, y, 236, 50, {cell + 2}, slot)
 		end
 		text(id .. "_number", row + 1, 21, 1, true)
+		-- A number has no choice to highlight: draw it in an unselected button.
 		three("button", 12, x + 11, first, {row + 5}, slot)
-		three("value_selected", 24, x + 11, first, {row + 5}, slot, 2)
 		draw(id .. "_number", x + width / 2, first + 14, 206, 24, {row + 5}, slot)
 	end
 
