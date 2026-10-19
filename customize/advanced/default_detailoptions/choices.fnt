@@ -2,7 +2,7 @@ info face="font_test" size=21 bold=0 italic=0 charset="" unicode=0 stretchH=100 
 common lineHeight=21 base=21 scaleW=512 scaleH=512 pages=2 packed=0
 page id=0 file="../default_commonparts/font/m_select_system.png"
 page id=1 file="../default_commonparts/font/m_select_profile_241.png"
-chars count=74
+chars count=75
 char id=0       x=0    y=0    width=0    height=0    xoffset=0    yoffset=0    xadvance=0    page=0    chnl=0
 char id=10      x=0    y=0    width=0    height=0    xoffset=0    yoffset=0    xadvance=0    page=0    chnl=0
 char id=32      x=0    y=0    width=0    height=0    xoffset=0    yoffset=0    xadvance=10   page=0    chnl=0
@@ -75,6 +75,7 @@ char id=120     x=346  y=105  width=17   height=21   xoffset=0    yoffset=0    x
 char id=121     x=363  y=105  width=17   height=21   xoffset=0    yoffset=5    xadvance=17   page=0    chnl=0
 char id=122     x=380  y=105  width=17   height=21   xoffset=0    yoffset=0    xadvance=17   page=0    chnl=0
 char id=127     x=120  y=21   width=20   height=21   xoffset=0    yoffset=0    xadvance=20   page=0    chnl=0
+char id=38 x=643 y=0 width=22 height=25 xoffset=-2 yoffset=-3 xadvance=17 page=1 chnl=0
 char id=40 x=23 y=0 width=14 height=29 xoffset=-2 yoffset=-4 xadvance=10 page=1 chnl=0
 char id=41 x=37 y=0 width=14 height=29 xoffset=-2 yoffset=-4 xadvance=10 page=1 chnl=0
 kernings count=0
