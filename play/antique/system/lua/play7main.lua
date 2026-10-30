@@ -1594,66 +1594,105 @@ local function main()
 				{key = "inc", op = 19065, src_y = 26, r = 204, g = 204, b = 255, outline = "ccccffff"},
 				{key = "dec", op = 19066, src_y = 39, r = 255, g = 204, b = 204, outline = "ffccccff"}
 			}
-			for _, color in ipairs(colors) do
-				table.insert(skin.value, {id = "num_bpm_preview_from_" .. color.key, src = "src_number_common_s",
-					x = 0, y = color.src_y, w = 130, h = 13, divx = 10, digit = digits, align = from_align, ref = 19062})
-				table.insert(skin.value, {id = "num_bpm_preview_to_" .. color.key, src = "src_number_common_s",
-					x = 0, y = color.src_y, w = 130, h = 13, divx = 10, digit = digits, align = to_align, ref = 19061})
-				-- 縁取りで線を太くし、数字の太さに近づける
-				table.insert(skin.text, {id = "txt_bpm_preview_arrow_" .. color.key, font = "font1", size = arrow_size,
-					align = 1, constantText = "»", outlineColor = color.outline, outlineWidth = 0.5})
-			end
-
-			-- レーン側の数字の桁数 (1～3桁) で「»」と反対側の数字の位置を変える
+			-- 数字画像は絶対値を描くため、負号を別に描画してレイアウトにも1桁分含める。
 			local digit_lower = {[2] = 10, [3] = 100}
 			local digit_upper = {[1] = 10, [2] = 100}
-			local function digits_draw(ref, count)
+			local function digits_draw(ref, count, negative)
 				local terms = {}
-				if digit_lower[count] then table.insert(terms, "number(" .. ref .. ") >= " .. digit_lower[count]) end
-				if digit_upper[count] then table.insert(terms, "number(" .. ref .. ") < " .. digit_upper[count]) end
+				local value = "number(" .. ref .. ")"
+				if negative then
+					if digit_lower[count] then table.insert(terms, value .. " <= -" .. digit_lower[count]) end
+					if digit_upper[count] then table.insert(terms, value .. " > -" .. digit_upper[count]) end
+				else
+					if digit_lower[count] then table.insert(terms, value .. " >= " .. digit_lower[count]) end
+					if digit_upper[count] then table.insert(terms, value .. " < " .. digit_upper[count]) end
+				end
 				return table.concat(terms, " && ")
 			end
-			-- 数字のxは3桁分の枠の左端、「»」のxは中心
-			local items = {}
-			local box_w = dw * digits
-			if layout == "center" then
-				local mid = lane_center + ox
-				items = {
-					{part = "from", x = mid - arrow_w / 2 - gap - box_w},
-					{part = "arrow", x = mid},
-					{part = "to", x = mid + arrow_w / 2 + gap}
-				}
-			elseif layout == "right" then
-				local left = geo.play.x + geo.play.w + 8 + ox
-				table.insert(items, {part = "from", x = left})
-				for count = 1, digits do
-					local draw = digits_draw(19062, count)
-					table.insert(items, {part = "arrow", x = left + count * dw + gap + arrow_w / 2, draw = draw})
-					table.insert(items, {part = "to", x = left + count * dw + gap * 2 + arrow_w, draw = draw})
-				end
-			else
-				local right = geo.play.x - 8 + ox
-				table.insert(items, {part = "to", x = right - box_w})
-				for count = 1, digits do
-					local draw = digits_draw(19061, count)
-					table.insert(items, {part = "arrow", x = right - count * dw - gap - arrow_w / 2, draw = draw})
-					table.insert(items, {part = "from", x = right - count * dw - gap * 2 - arrow_w - box_w, draw = draw})
-				end
+			local function and_draw(first, second)
+				if not first or first == "" then return second end
+				if not second or second == "" then return first end
+				return first .. " && " .. second
 			end
-			for _, color in ipairs(colors) do
-				for _, item in ipairs(items) do
-					local frame = {time = 0, x = item.x, y = y, w = dw, h = h, a = 0}
-					local id = "num_bpm_preview_" .. item.part .. "_" .. color.key
-					if item.part == "arrow" then
-						id = "txt_bpm_preview_arrow_" .. color.key
-						-- フォントの「»」は字面が下寄りのため、数字と中心が揃うよう持ち上げる
-						frame.y, frame.w, frame.h = y - math.floor((arrow_size - h) / 2) + arrow_dy, arrow_w, arrow_size
-						frame.r, frame.g, frame.b = color.r, color.g, color.b
+			for _, variant in ipairs({
+				{key = "", from_neg = false, to_neg = false},
+				{key = "from_neg_", from_neg = true, to_neg = false},
+				{key = "to_neg_", from_neg = false, to_neg = true},
+				{key = "both_neg_", from_neg = true, to_neg = true}
+			}) do
+				local prefix = variant.key == "" and "bpm_preview_" or "signed_bpm_preview_" .. variant.key
+				local guard = "number(19062) " .. (variant.from_neg and "< 0" or ">= 0")
+					.. " && number(19061) " .. (variant.to_neg and "< 0" or ">= 0")
+				for _, color in ipairs(colors) do
+					for _, part in ipairs({"from", "to"}) do
+						table.insert(skin.value, {id = "num_" .. prefix .. part .. "_" .. color.key, src = "src_number_common_s",
+							x = 0, y = color.src_y, w = 130, h = 13, divx = 10, digit = digits,
+							align = part == "from" and from_align or to_align, ref = part == "from" and 19062 or 19061})
+						if variant[part .. "_neg"] then
+							table.insert(skin.text, {id = "txt_" .. prefix .. "minus_" .. part .. "_" .. color.key,
+								font = "font1", size = arrow_size, align = 1, constantText = "−",
+								outlineColor = color.outline, outlineWidth = 0.5})
+						end
 					end
-					table.insert(skin.destination, {
-						id = id, timer = 19068, loop = 120, offsets = offsets, op = {19064, color.op}, draw = item.draw,
-						dst = {frame, {time = 120, a = alpha}}
-					})
+					table.insert(skin.text, {id = "txt_" .. prefix .. "arrow_" .. color.key, font = "font1", size = arrow_size,
+						align = 1, constantText = "»", outlineColor = color.outline, outlineWidth = 0.5})
+				end
+				local items = {}
+				local box_w = dw * digits
+				local function add_number(part, x, draw)
+					local negative = variant[part .. "_neg"]
+					local align = part == "from" and from_align or to_align
+					table.insert(items, {part = part, x = x + (negative and align == 1 and dw or 0), draw = draw})
+					if negative and align == 1 then
+						table.insert(items, {part = "minus_" .. part, x = x + round(dw / 2), draw = draw})
+					elseif negative then
+						for count = 1, digits do
+							local ref = part == "from" and 19062 or 19061
+							table.insert(items, {part = "minus_" .. part,
+								x = x + (digits - count - 1) * dw + round(dw / 2),
+								draw = and_draw(draw or "", digits_draw(ref, count, true))})
+						end
+					end
+				end
+				if layout == "center" then
+					local mid = lane_center + ox
+					add_number("from", mid - arrow_w / 2 - gap - box_w)
+					table.insert(items, {part = "arrow", x = mid})
+					add_number("to", mid + arrow_w / 2 + gap)
+				elseif layout == "right" then
+					local left = geo.play.x + geo.play.w + 8 + ox
+					add_number("from", left)
+					for count = 1, digits do
+						local width = count + (variant.from_neg and 1 or 0)
+						local draw = digits_draw(19062, count, variant.from_neg)
+						table.insert(items, {part = "arrow", x = left + width * dw + gap + arrow_w / 2, draw = draw})
+						add_number("to", left + width * dw + gap * 2 + arrow_w, draw)
+					end
+				else
+					local right = geo.play.x - 8 + ox
+					add_number("to", right - box_w)
+					for count = 1, digits do
+						local width = count + (variant.to_neg and 1 or 0)
+						local draw = digits_draw(19061, count, variant.to_neg)
+						table.insert(items, {part = "arrow", x = right - width * dw - gap - arrow_w / 2, draw = draw})
+						add_number("from", right - width * dw - gap * 2 - arrow_w - box_w, draw)
+					end
+				end
+				for _, color in ipairs(colors) do
+					for _, item in ipairs(items) do
+						local frame = {time = 0, x = item.x, y = y, w = dw, h = h, a = 0}
+						local text = item.part == "arrow" or string.sub(item.part, 1, 6) == "minus_"
+						local id = (text and "txt_" or "num_") .. prefix .. item.part .. "_" .. color.key
+						if text then
+							frame.y, frame.w, frame.h = y - math.floor((arrow_size - h) / 2) + arrow_dy,
+								item.part == "arrow" and arrow_w or dw, arrow_size
+							frame.r, frame.g, frame.b = color.r, color.g, color.b
+						end
+						table.insert(skin.destination, {
+							id = id, timer = 19068, loop = 120, offsets = offsets, op = {19064, color.op},
+							draw = and_draw(guard, item.draw), dst = {frame, {time = 120, a = alpha}}
+						})
+					end
 				end
 			end
 		end
