@@ -1565,8 +1565,8 @@ local function main()
 			local gap, digits = math.max(0, round(9 * scale_x)), 3
 			-- 「»」は数字と同程度の高さ・太さに見えるようフォントを大きめにする
 			local arrow_w, arrow_size, arrow_dy = round(20 * scale_x), round(32 * scale_y), round(2 * scale_y)
-			-- 既存の負号 (11x3px) と太さを揃え、13px枠の左右に3pxずつ空ける。
-			local minus_w, minus_h = math.max(1, round(7 * scale_x)), math.max(1, round(3 * scale_y))
+			-- 既存の負号と同じ11x3px。13px枠の左右各1px・上下各5pxを空ける。
+			local minus_w, minus_h = math.max(1, round(11 * scale_x)), math.max(1, round(3 * scale_y))
 			local lane_center = geo.lane.x + geo.lane.w / 2
 			local y, offsets
 			if bpmPreviewType == 1 then
