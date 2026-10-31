@@ -1565,6 +1565,8 @@ local function main()
 			local gap, digits = math.max(0, round(9 * scale_x)), 3
 			-- 「»」は数字と同程度の高さ・太さに見えるようフォントを大きめにする
 			local arrow_w, arrow_size, arrow_dy = round(20 * scale_x), round(32 * scale_y), round(2 * scale_y)
+			-- 既存の負号 (11x3px) と太さを揃え、13px枠の左右に3pxずつ空ける。
+			local minus_w, minus_h = math.max(1, round(7 * scale_x)), math.max(1, round(3 * scale_y))
 			local lane_center = geo.lane.x + geo.lane.w / 2
 			local y, offsets
 			if bpmPreviewType == 1 then
@@ -1628,11 +1630,6 @@ local function main()
 						table.insert(skin.value, {id = "num_" .. prefix .. part .. "_" .. color.key, src = "src_number_common_s",
 							x = 0, y = color.src_y, w = 130, h = 13, divx = 10, digit = digits,
 							align = part == "from" and from_align or to_align, ref = part == "from" and 19062 or 19061})
-						if variant[part .. "_neg"] then
-							table.insert(skin.text, {id = "txt_" .. prefix .. "minus_" .. part .. "_" .. color.key,
-								font = "font1", size = arrow_size, align = 1, constantText = "−",
-								outlineColor = color.outline, outlineWidth = 0.5})
-						end
 					end
 					table.insert(skin.text, {id = "txt_" .. prefix .. "arrow_" .. color.key, font = "font1", size = arrow_size,
 						align = 1, constantText = "»", outlineColor = color.outline, outlineWidth = 0.5})
@@ -1681,11 +1678,18 @@ local function main()
 				for _, color in ipairs(colors) do
 					for _, item in ipairs(items) do
 						local frame = {time = 0, x = item.x, y = y, w = dw, h = h, a = 0}
-						local text = item.part == "arrow" or string.sub(item.part, 1, 6) == "minus_"
-						local id = (text and "txt_" or "num_") .. prefix .. item.part .. "_" .. color.key
-						if text then
+						local arrow = item.part == "arrow"
+						local minus = string.sub(item.part, 1, 6) == "minus_"
+						local id = (arrow and "txt_" or "num_") .. prefix .. item.part .. "_" .. color.key
+						if minus then
+							id = -111 -- 白矩形を数字と同じ色で描く
+							frame.x = item.x - round(dw / 2) + math.floor((dw - minus_w) / 2)
+							frame.y, frame.w, frame.h = y + math.floor((h - minus_h) / 2), minus_w, minus_h
+						elseif arrow then
 							frame.y, frame.w, frame.h = y - math.floor((arrow_size - h) / 2) + arrow_dy,
-								item.part == "arrow" and arrow_w or dw, arrow_size
+								arrow_w, arrow_size
+						end
+						if arrow or minus then
 							frame.r, frame.g, frame.b = color.r, color.g, color.b
 						end
 						table.insert(skin.destination, {
