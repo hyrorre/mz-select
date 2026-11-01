@@ -154,6 +154,8 @@ local function load()
 		end
 		
 		-- 当日リザルトここから
+		-- BMZ: io.openの書き込みを保存しないため、プロフィールのプレイ履歴から集計した当日の値を使う
+		local bmz_daily = bmz ~= nil
 		local play_data_path		= ADVANCED_PATH .. "/default_playerrank2/data"
 		local play_songs_path		= ADVANCED_PATH .. "/default_playerrank2/songs"
 		local today_num_font_path	= "customize/advanced/default_playerrank2/num.fnt"
@@ -397,7 +399,7 @@ local function load()
 			{id = "default_playerrank2_graph",	src = "src-default_playerrank2_parts", x = 0, y = 50, w = 180, h = 11},
 			{id = "default_playerrank2_rect",	src = "src-default_playerrank2_parts", x = 0, y = 89, w = 280, h = 50},
 			{id = "default_playerrank2_button",	src = "src-default-commonparts-system", x = 0, y = 0, w = 1, h = 1, act = (function() return toggle() end)},
-			{id = "default_playerrank2_button_reset",		src = "src-default_playerrank2_button_reset", x = 0, y = 0, w = 100, h = 25, act = (function() return button_reset() end)},
+			{id = "default_playerrank2_button_reset",		src = "src-default_playerrank2_button_reset", x = 0, y = 0, w = 100, h = 25, act = bmz_daily and -10100 or (function() return button_reset() end)},
 			{id = "default_playerrank2_button_reset_rect",	src = "src-default_playerrank2_button_reset", x = 0, y = 25, w = 100, h = 25},
 			{id = "default_playerrank2_image",	src = "src-default_playerrank2_profile_image", x = 0, y = 0, w = -1, h = -1},
 			{id = "default_playerrank2_ui",		src = "src-default_playerrank2_profile_ui", x = 0, y = 0, w = -1, h = -1},
@@ -474,6 +476,47 @@ local function load()
 			{id = "default_playSongLogger_song10",	font = "font-default-commonparts-m_select3", size = 24, align = 2, overflow = 1, constantText = today_result.songs[10]}
 		}
 		
+		-- BMZ: 当日の集計(1930..1943)と直近曲名(1950..1959)を参照する。リセットはevent -10100
+		if bmz_daily then
+			local function percent(count, total)
+				if total == 0 then return "0" end
+				local value = math.floor(count / total * 10000 + 0.5) / 100
+				if value == math.floor(value) then return string.format("%d", value) end
+				return tostring(value)
+			end
+			local function judge(ref)
+				return function()
+					local count = main_state.number(ref)
+					return count .. "  (" .. percent(count, main_state.number(1938)) .. "%)"
+				end
+			end
+			local function notes() return main_state.number(1938) end
+			local values = {
+				defaultNotesProcessingCounter_exscore	= function() return main_state.number(1940) end,
+				defaultNotesProcessingCounter_pg		= judge(1932),
+				defaultNotesProcessingCounter_gr		= judge(1933),
+				defaultNotesProcessingCounter_gd		= judge(1934),
+				defaultNotesProcessingCounter_bd		= judge(1935),
+				defaultNotesProcessingCounter_pr		= judge(1936),
+				defaultNotesProcessingCounter_notes		= notes,
+				defaultNotesProcessingCounter_stroke	= notes,
+				defaultNotesProcessingCounter_cp		= function() return main_state.number(1931) .. "/" .. main_state.number(1930) end,
+				defaultNotesProcessingCounter_rate		= function() return percent(main_state.number(1940), main_state.number(1941)) end,
+			}
+			for _, text in ipairs(parts.text) do
+				local song = string.match(text.id, "^default_playSongLogger_song(%d+)$")
+				if values[text.id] then
+					text.value = values[text.id]
+				elseif text.id == "defaultNotesProcessingCounter_rank" then
+					text.value = nil
+					text.ref = 1943
+				elseif song then
+					text.constantText = nil
+					text.ref = 1949 + tonumber(song)
+				end
+			end
+		end
+
 		parts.graph = {
 			{id = "default_playerrank2_profile_graph", src = "src-default-commonparts-system", x = 824, y = 325, w = 1, h = 8, angle = 0, value = function() return profile.graph end}
 		}
