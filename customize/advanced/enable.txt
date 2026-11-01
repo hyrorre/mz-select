@@ -35,4 +35,5 @@ default_time/parts.lua
 default_version/parts.lua
 default_network/parts.lua
 default_detailoptions/parts.lua
+default_battleinfo/parts.lua
 default_shutter/parts.lua

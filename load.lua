@@ -120,6 +120,7 @@ function load_parts()
 						skin.bmzDetailOptionsClose = parts.bmzDetailOptionsClose == true
 					end
 					append_all(skin.property, parts.property)
+					if parts.bmzBattleInfo then skin.bmzBattleInfo = true end
 					append_all(skin.filepath, parts.filepath)
 					append_all(skin.offset, parts.offset)
 					append_all(skin.source, parts.source)
@@ -184,6 +185,23 @@ function load_parts()
 			end
 		end
 		skin.destination = destinations
+	end
+	if skin.bmzBattleInfo then
+		-- Keep the top rival picker; replace only the three information bodies.
+		local picker = {
+			default_rivaldata_rivaldata_bg_select = true,
+			default_rivaldata_rivaldata_bg_select_rect = true,
+			default_rivaldata_rivalname = true,
+			default_rivaldata_rivalselect = true,
+		}
+		for _, destination in ipairs(skin.destination) do
+			local id = tostring(destination.id or "")
+			if not picker[id] and (id:match("^default_ranking_") or
+				id:match("^default_rivaldata_") or id:match("^default_irdata_")) then
+				destination.op = destination.op or {}
+				table.insert(destination.op, -20200)
+			end
+		end
 	end
 	if skin_config then sound = require("system.sound") end
 		
