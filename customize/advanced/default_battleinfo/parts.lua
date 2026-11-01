@@ -3,6 +3,8 @@ local function load()
 	if not bmz then return nil end
 	local prefix = "mz_battle_"
 	local active, known, pattern, loading = 20200, 20201, 20202, 20203
+	-- The chart panel artwork has four transparent rows above its visible edge.
+	local top_offset = 4
 	local parts = {
 		bmzBattleInfo = true,
 		source = {
@@ -17,7 +19,7 @@ local function load()
 		panel = {}, image = {}, text = {}, destination = {},
 	}
 	local function destination(id, x, top, w, h, op, draw, muted)
-		local frame = {x = x, y = 1080 - top - h, w = w, h = h}
+		local frame = {x = x, y = 1080 - top - h - top_offset, w = w, h = h}
 		-- Native NO PLAY glyphs have an opaque RGB(116, 116, 116) face.
 		if muted then frame.r, frame.g, frame.b = 116, 116, 116 end
 		table.insert(parts.destination, {id = prefix .. id, op = op or {active}, draw = draw,
