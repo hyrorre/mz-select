@@ -109,9 +109,12 @@ local function load()
 					local function visible()
 						return is_double() == double and count() == n and main_state.number(ref) > 0
 					end
+					-- Even original lanes are black keys, 8 included; the scratch stays white.
 					local function black()
 						local number = main_state.number(ref)
-						return number == 2 or number == 4 or number == 6
+						local mode = main_state.number(20208)
+						local scratch = (mode == 5 or mode == 7 or double) and number == n + 1
+						return number % 2 == 0 and not scratch
 					end
 					destination("white", x, top, tile, 40, {active, pattern}, function() return visible() and not black() end)
 					destination("black", x, top, tile, 40, {active, pattern}, function() return visible() and black() end)
