@@ -111,7 +111,7 @@ local function main()
 			},
 			slider = {
 				{id = "scroll-fg",			src = "parts", x = 910, y = 0, w = 64, h = 64, angle = 2, range = 319, type = 7, changeable = false},
-				{id = "scroll-collision",	src = "parts", x = 974, y = 0, w = 64, h = 64, angle = 2, range = 341, type = 7}
+				{id = "scroll-collision",	src = "parts", x = 974, y = 0, w = 64, h = 64, angle = 2, range = 319, type = 7}
 			},
 			destination = {
 				{id = "custom-window",			dst = {{x = pos.window[1], y = pos.window[2], w = 1110, h = 440}}},
@@ -121,7 +121,7 @@ local function main()
 				{id = "arrow-l-active",			dst = {{x = pos.window[1] + 123, y = pos.window[2] + 410, w = 16, h = 20}}, mouseRect = {x = 0, y = -10, w = 282, h = 40}},
 				{id = "arrow-r-active",			dst = {{x = pos.window[1] + 671, y = pos.window[2] + 410, w = 16, h = 20}}, mouseRect = {x = -266, y = -10, w = 282, h = 40}},
 				{id = "scroll-fg", blend = 2, loop = 0,	dst = {{time = 0,	x = pos.window[1] + 1065, y = pos.window[2] + 327, w = 64, h = 64, a = 255}, {time = 200, a = 162}}},
-				{id = "scroll-collision",				dst = {{			x = pos.window[1] + 1065, y = pos.window[2] + 370, w = 64, h = 64}}}
+				{id = "scroll-collision",				dst = {{			x = pos.window[1] + 1065, y = pos.window[2] + 327 + 32, w = 64, h = 64}}}
 			}
 		}
 		for i = 1, 10 do
